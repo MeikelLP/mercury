@@ -1,9 +1,9 @@
 <template lang="html">
-  <report title="REPORTS.CHRONO.TITLE" color="primary" icon="fa-area-chart">
+  <report title="REPORTS.CHRONO.TITLE" color="primary" icon="chart-area">
     <span>{{ 'REPORTS.COMMON.TIME_SPAN' | translate }}:</span>
     <div class="field has-addons">
       <div class="control">
-        <a class="button is-primary is-tag"><icon fa="fa-calendar"/></a>
+        <a class="button is-primary is-tag"><font-awesome-icon icon="calendar"/></a>
       </div>
       <div class="control select is-primary">
         <select v-model="options.period" @change="throwPeriod()">
@@ -18,7 +18,7 @@
     <div class="field columns">
       <div class="control field has-addons column">
         <div class="control">
-          <a class="button is-primary is-tag"><icon fa="fa-calendar-minus-o"/></a>
+          <a class="button is-primary is-tag"><font-awesome-icon icon="calendar-minus"/></a>
         </div>
         <div class="control" style="width: 10vw">
           <input class="input"
@@ -32,7 +32,7 @@
       </div>
       <div class="control field has-addons column">
         <div class="control">
-          <a class="button is-primary is-tag"><icon fa="fa-calendar-plus-o"/></a>
+          <a class="button is-primary is-tag"><font-awesome-icon icon="calendar-plus"/></a>
         </div>
         <div class="control" style="width: 10vw">
           <input class="input"
@@ -49,15 +49,14 @@
 </template>
 
 <script>
-import icon from '@/components/common/icon'
 import report from '@/reports/components/report'
 
 import { ipcRenderer } from 'electron'
 import Database from '@/assets/Database.class'
 import chartJS from 'chart.js' // eslint-disable-line
 import moment from 'moment'
-import path from 'path'
 import Vue from 'vue'
+import Migrator from '../../util/migrator'
 
 // Use datepart SQL to filter by week / month / day / quarter /
 // https://docs.microsoft.com/en-us/sql/t-sql/functions/datepart-transact-sql?view=sql-server-2017
@@ -71,7 +70,7 @@ const colors = [ // eslint-disable-line
 ]
 
 export default {
-  components: { icon, report },
+  components: { report },
   data: function () {
     return {
       db: null,
@@ -295,19 +294,20 @@ export default {
     }
   },
   mounted: function () {
-    const dbPath = path.join(__static, 'data/template.sqlite')
     const ctx = document.getElementById('myChart')
 
     if (!this.$root.settings.lastfile) {
-      this.db = new Database(dbPath)
+      this.db = new Database()
     } else {
       try {
         this.db = new Database(this.$root.settings.lastfile)
       } catch (e) {
         console.warn(e.message)
-        this.db = new Database(dbPath)
+        this.db = new Database()
       }
     }
+    // TODO only on app start
+    Migrator.migrate(this.db)
     this.getAccounts(this)
     // <!-- HERE -->
     this.updateConfig()
