@@ -1,6 +1,6 @@
 <template lang="html">
   <div :class="$root.settings.theme" id="app">
-    <div class="columns">
+    <div class="columns is-mobile">
       <div class="column" style="-webkit-app-region: drag">
         <span class="title">
           <span class="icon">

@@ -1,7 +1,7 @@
 <template>
   <div id="app" :class="$root.settings.theme">
-    <section id="window" class="hero is-fullheight">
-      <div class="hero-body is-paddingless">
+    <section id="window">
+      <div>
         <div class="tile is-ancestor">
             <accounts-pane />
             <main-pane />
