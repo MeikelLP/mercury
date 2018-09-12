@@ -1,14 +1,20 @@
 <template lang="html">
   <div :class="$root.settings.theme" id="app">
-    <p class="title" style="-webkit-app-region: drag">
-      <span style="margin-left:2%">
-        <font-awesome-icon size="lg" class="has-text-info" icon="sliders-h" />
-        <span>{{'SETTINGS.TITLE' | translate}}</span>
-      </span>
-      <a onclick="window.close()" class="button is-outlined is-danger is-pulled-right">
-        <font-awesome-icon icon="times"/>
-      </a>
-    </p>
+    <div class="columns">
+      <div class="column" style="-webkit-app-region: drag">
+        <span class="title">
+          <span class="icon">
+            <font-awesome-icon class="has-text-info" icon="sliders-h" />
+          </span>
+          <span>{{'SETTINGS.TITLE' | translate}}</span>
+        </span>
+      </div>
+      <div class="column is-narrow">
+        <a onclick="window.close()" class="button is-outlined is-danger is-pulled-right">
+          <font-awesome-icon icon="times"/>
+        </a>
+      </div>
+    </div>
     <ul class="tabs is-fullwidth">
       <li v-for="tab in tabs" :key="tab.key" :class="{'is-active': activeTab === tab.component}">
         <a @click="activeTab = tab.component">
