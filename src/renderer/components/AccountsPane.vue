@@ -1,124 +1,126 @@
-<template lang="html">
-  <div class="tile is-parent  is-2 is-paddingless" id="account-pane">
-    <article class="tile is-child notification hero is-fullheight is-black" style="padding-right: 24px">
-      <div class="content">
-        <p class="title">
-          {{'ACCOUNTS_PANE.DEFAULT'| translate}}
-          <transition name="slide-fade">
-            <font-awesome-icon icon="exclamation-circle" size="xs" class="has-text-warning" v-if="unsaved"/>
-          </transition>
-        </p>
-        <p class="control">
-          <a class="button is-primary is-small is-outlined" @click="showCreateModal()">
-            <span class="icon is-small">
-              <font-awesome-icon icon="plus-square"></font-awesome-icon>
-            </span>
-            <span>{{'ACCOUNTS_PANE.ADD' | translate }}</span>
-          </a>
-        </p>
-        <!-- createAccount modal -->
-        <modal :active="createModalShown" icon="university" :close="closeModal">
-          <p class="title">{{'ACCOUNTS_PANE.MODAL.TITLE' | translate }}</p>
-          <form>
-            <div class="field has-addons">
-              <p class="control">
-                <a class="button is-tag is-primary">
-                  <font-awesome-icon size="sm" icon="tag"/>
-                </a>
-              </p>
-              <p class="control is-expanded">
-                <input class="input" type="text" :class="{'is-danger': errorName}"
-                       :placeholder="'ACCOUNTS_PANE.MODAL.PLACEHOLDER' | translate"
-                       v-model="newAccount.name"
-                       autofocus>
-              </p>
+<template>
+  <section class="section">
+    <p class="title">
+      {{'ACCOUNTS_PANE.DEFAULT'| translate}}
+      <transition name="slide-fade">
+        <font-awesome-icon icon="exclamation-circle" size="xs" class="has-text-warning" v-if="unsaved"/>
+      </transition>
+    </p>
+    <!-- createAccount modal -->
+    <modal :active="createModalShown" icon="university" :close="closeModal">
+      <p class="title">{{'ACCOUNTS_PANE.MODAL.TITLE' | translate }}</p>
+      <form>
+        <div class="field has-addons">
+          <p class="control">
+            <a class="button is-tag is-primary">
+              <font-awesome-icon size="sm" icon="tag"/>
+            </a>
+          </p>
+          <p class="control is-expanded">
+            <input class="input" type="text" :class="{'is-danger': errorName}"
+                   :placeholder="'ACCOUNTS_PANE.MODAL.PLACEHOLDER' | translate"
+                   v-model="newAccount.name"
+                   autofocus>
+          </p>
+        </div>
+        <div class="columns">
+          <div class="column is-4 field has-addons">
+            <div class="control">
+              <a class="button is-tag is-primary">
+                <font-awesome-icon :icon="currencyIcon(this.newAccount.currency)" fixed-width />
+              </a>
             </div>
-            <div class="columns">
-              <div class="column is-4 field has-addons">
-                <div class="control">
-                  <a class="button is-tag is-primary">
-                    <font-awesome-icon :icon="currencyIcon(this.newAccount.currency)" fixed-width />
-                  </a>
-                </div>
-                <div class="control select">
-                  <select id="select-cur" name="a-cur" v-model="newAccount.currency">
-                    <option value="" disabled selected>{{'CURRENCIES.DEFAULT' | translate}}</option>
-                    <option :value="currency.key" v-for="currency in currencies" :key="currency.key">{{currencyTranslation(currency.name)}}
-                    </option>
-                    <option value="money">{{ 'CURRENCIES.OTHER' | translate }}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="column is-8 field has-addons">
-                <div class="control">
-                  <p class="button is-tag is-primary">{{'ACCOUNTS_PANE.MODAL.CURRENT_AMOUNT' | translate }}</p>
-                </div>
-                <p class="control">
-                  <input class="input" type="number" :placeholder="'0.00' | format" v-model="newAccount.amount">
-                </p>
-              </div>
+            <div class="control select">
+              <select id="select-cur" name="a-cur" v-model="newAccount.currency">
+                <option value="" disabled selected>{{'CURRENCIES.DEFAULT' | translate}}</option>
+                <option :value="currency.key" v-for="currency in currencies" :key="currency.key">{{currencyTranslation(currency.name)}}
+                </option>
+                <option value="money">{{ 'CURRENCIES.OTHER' | translate }}</option>
+              </select>
             </div>
-            <div class="field">
-              <p class="control is-pulled-left">
-                <a class="button is-info is-outlined" :class="{'loading': loading}" @click="createNewAccount()">{{'CREATE' | translate }}</a>
-              </p>
-              <p class="control is-pulled-right">
-                <a class="button is-danger is-outlined" :class="{'loading': loading}" @click="closeModal()">{{"CANCEL" | translate }}</a>
-              </p>
+          </div>
+          <div class="column is-8 field has-addons">
+            <div class="control">
+              <p class="button is-tag is-primary">{{'ACCOUNTS_PANE.MODAL.CURRENT_AMOUNT' | translate }}</p>
             </div>
-          </form>
-        </modal>
+            <p class="control">
+              <input class="input" type="number" :placeholder="'0.00' | format" v-model="newAccount.amount">
+            </p>
+          </div>
+        </div>
+        <div class="field">
+          <p class="control is-pulled-left">
+            <a class="button is-info is-outlined" :class="{'loading': loading}" @click="createNewAccount()">{{'CREATE' | translate }}</a>
+          </p>
+          <p class="control is-pulled-right">
+            <a class="button is-danger is-outlined" :class="{'loading': loading}" @click="closeModal()">{{"CANCEL" | translate }}</a>
+          </p>
+        </div>
+      </form>
+    </modal>
 
-        <div id="account-list">
-          <article class="card notification is-dark is-paddingless" v-for="account in accounts" :key="account.name">
-            <div class="card-header">
-              <div class="card-header-icon">
-                <font-awesome-icon icon="university"/>
-              </div>
-              <div class="card-header-title" style="flex: 1">
-                {{account.name}}
-              </div>
-              <button class="delete" @click="deleteAccount(account)"></button>
+    <div class="columns is-multiline">
+      <div class="column">
+        <div class="card" v-for="account in accounts" :key="account.name">
+          <div class="card-header">
+            <div class="card-header-icon">
+              <font-awesome-icon icon="university"/>
             </div>
-            <div class="card-content">
-              <div class="content is-paddingless is-marginless">
-                <small>
-                  <p>
-                    {{ 'ACCOUNTS_PANE.CARDS.BANK'   | translate }}
-                    <span class="amount" :class="{ 'has-text-danger': account.inBank <= 0 }">
-                      {{account.inBank | format}}
-                      <span class="icon">
-                        <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
-                      </span>
-                    </span>
-                  </p>
-                  <p>
-                    {{ 'ACCOUNTS_PANE.CARDS.TODAY'  | translate }}
-                    <span class="amount" :class="{ 'has-text-danger': account.today <= 0 }">
-                      {{account.today | format}}
-                      <span class="icon">
-                        <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
-                      </span>
-                    </span>
-                  </p>
-                  <p>
-                    {{ 'ACCOUNTS_PANE.CARDS.FUTURE' | translate }}
-                    <span class="amount" :class="{ 'has-text-danger': account.future <= 0 }">
-                      {{account.future | format}}
-                      <span class="icon">
-                        <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
-                      </span>
-                    </span>
-                  </p>
-                </small>
-              </div>
+            <div class="card-header-title">
+              {{account.name}}
             </div>
-          </article>
-
+            <div class="card-header-icon">
+              <a @click="deleteAccount(account)" class="has-text-danger">
+                <font-awesome-icon icon="trash" size="sm"/>
+              </a>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="content is-paddingless is-marginless">
+              <p>
+                {{ 'ACCOUNTS_PANE.CARDS.BANK'   | translate }}
+                <span class="amount" :class="{ 'has-text-danger': account.inBank <= 0 }">
+                  {{account.inBank | format}}
+                  <span class="icon">
+                    <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
+                  </span>
+                </span>
+              </p>
+              <p>
+                {{ 'ACCOUNTS_PANE.CARDS.TODAY'  | translate }}
+                <span class="amount" :class="{ 'has-text-danger': account.today <= 0 }">
+                  {{account.today | format}}
+                  <span class="icon">
+                    <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
+                  </span>
+                </span>
+              </p>
+              <p>
+                {{ 'ACCOUNTS_PANE.CARDS.FUTURE' | translate }}
+                <span class="amount" :class="{ 'has-text-danger': account.future <= 0 }">
+                  {{account.future | format}}
+                  <span class="icon">
+                    <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
+                  </span>
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </article>
-  </div>
+
+      <div class="column">
+        <a class="button is-primary is-outlined is-fullwidth has-text-centered" @click="showCreateModal()">
+          <span class="icon">
+            <font-awesome-icon icon="plus-square"></font-awesome-icon>
+          </span>
+          <span>
+            {{'ACCOUNTS_PANE.ADD' | translate }}
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script>

@@ -1,12 +1,14 @@
 <template>
   <div id="app" :class="$root.settings.theme">
-    <section id="window">
-      <div>
-        <div class="tile is-ancestor">
-            <accounts-pane />
-            <main-pane />
-            <operation-pane />
-        </div>
+    <section class="columns">
+      <div class="column">
+        <accounts-pane />
+      </div>
+      <div class="column">
+        <main-pane />
+      </div>
+      <div class="column is-one-fifth">
+        <operation-pane />
       </div>
     </section>
   </div>
