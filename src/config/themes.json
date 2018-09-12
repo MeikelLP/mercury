@@ -1,0 +1,10 @@
+[
+  {
+    "key": "dark",
+    "name": "$SETTINGS.TABS.GENERAL.DARK_THEME"
+  },
+  {
+    "key": "light",
+    "name": "$SETTINGS.TABS.GENERAL.LIGHT_THEME"
+  }
+]

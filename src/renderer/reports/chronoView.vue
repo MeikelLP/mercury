@@ -7,7 +7,7 @@
       </div>
       <div class="control select is-primary">
         <select v-model="options.period" @change="throwPeriod()">
-          <option v-for="time in timesSpan" :value="time.value">{{time.label | translate}}</option>
+          <option v-for="time in timesSpan" :key="time.label" :value="time.value">{{time.label | translate}}</option>
         </select>
       </div>
     </div>

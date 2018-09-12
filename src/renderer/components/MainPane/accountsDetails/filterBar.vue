@@ -2,24 +2,24 @@
   <nav class="field is-grouped">
     <custom-field is-control="true" fa="university" type="select is-primary" >
       <select v-model="filters.account" @change="$root.$emit('update-filters')" style="width: 12vw">
-        <option v-for="account in accounts" :value="account">{{account.name}}</option>
+        <option v-for="account in accounts" :value="account" :key="account.name">{{account.name}}</option>
       </select>
     </custom-field>
 
     <custom-field is-control="true" fa="calendar" type="select is-primary">
       <select v-model="filters.date" @change="$root.$emit('update-filters')" style="width: 12vw">
-        <option v-for="time in timesSpan" :value="time.value">{{time.label | translate}}</option>
+        <option v-for="time in timesSpan" :value="time.value" :key="time.label">{{time.label | translate}}</option>
       </select>
     </custom-field>
 
     <custom-field is-control="true" fa="adjust" type="select is-primary" >
       <select v-model="filters.state" @change="$root.$emit('update-filters')" style="width: 8vw">
-        <option v-for="state in states" :value="state.key">{{ configTranslation(state.name) }}</option>
+        <option v-for="state in states" :value="state.key" :key="state.name">{{ configTranslation(state.name) }}</option>
       </select>
     </custom-field>
     <custom-field is-control="true" fa="balance-scale" type="select is-primary" >
       <select v-model="filters.amount" @change="$root.$emit('update-filters')" style="width: 8vw">
-        <option v-for="amount in amounts" :value="amount.value">{{amount.label | translate}}</option>
+        <option v-for="amount in amounts" :value="amount.value" :key="amount.label">{{amount.label | translate}}</option>
       </select>
     </custom-field>
 
@@ -33,8 +33,7 @@
 </template>
 
 <script>
-import customField from '@/components/common/customField.vue'
-
+import CustomField from '../../common/customField'
 import {ipcRenderer} from 'electron'
 import moment from 'moment'
 import Vue from 'vue'
@@ -45,7 +44,7 @@ import OPERATION_STATES from '../../../../config/operation-states'
 
 export default {
   components: {
-    customField
+    CustomField
   },
   data: function () {
     return {

@@ -79,10 +79,10 @@
             <tr v-if="!data.length && !loading" :key="-1">
               <td colspan="8" class="has-text-grey has-text-centered">{{"NO_DATA" | translate}}</td>
             </tr>
-            <tr v-if="loading" :key="-2">
+            <tr v-else-if="loading" :key="-2">
               <td colspan="8" class="has-text-grey has-text-centered"><a class="button is-loading has-background-black" style="border: none"></a></td>
             </tr>
-            <tr v-if="data.length && !loading"
+            <tr v-else-if="data.length && !loading"
                 v-for="row in orderedData"
                 :key="row.id"
                 :class="{'is-selected': row.isClicked, 'is-future': isFuture(row)}"
@@ -93,7 +93,9 @@
               <td><div class="is-not-too-large">{{row.beneficiary}}</div></td>
               <td>{{row.category}}</td>
               <td><div class="is-not-too-large">{{row.label}}</div></td>
-              <td class="has-text-centered" :class="{'has-text-danger': !isFuture(row)}">{{row.amount < 0 ? row.amount.toLocaleString($root.settings.language): ''}}</td>
+              <td class="has-text-centered" :class="{'has-text-danger': !isFuture(row)}">
+                {{ row.amount | format }}
+              </td>
               <td class="has-text-centered" :class="{'has-text-success': !row.isClicked && !isFuture(row)}">{{row.amount >= 0 ? row.amount.toLocaleString($root.settings.language): ''}}</td>
             </tr>
           </transition-group>
@@ -103,7 +105,7 @@
 </template>
 
 <script>
-import filterBar from '@/components/MainPane/accountsDetails/filterBar'
+import FilterBar from '@/components/MainPane/accountsDetails/filterBar'
 
 import _ from 'lodash'
 import moment from 'moment'
@@ -112,7 +114,7 @@ import {stateIcon} from '../../util/icons'
 
 export default {
   components: {
-    filterBar
+    FilterBar
   },
   data: function () {
     return {
@@ -137,6 +139,9 @@ export default {
         default:
           return _.orderBy(this.data, this.orderBy, [this.order])
       }
+    },
+    language () {
+      return this.$root.settings.language
     }
   },
   methods: {

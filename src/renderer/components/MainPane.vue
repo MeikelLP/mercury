@@ -4,28 +4,12 @@
       <section class="tile is-child hero notification is-paddingless is-dark is-bottomless">
         <div class="tabs is-boxed is-small is-fullwidth is-bottomless">
           <ul>
-            <li class="tab" :class="{'is-active': activeTab === 'dashboard'}">
-              <a @click="tabToggle('dashboard')">
+            <li class="tab" v-for="tab in tabs" :class="{'is-active': activeTab === tab.component}" :key="tab.name">
+              <a @click="activeTab = tab.component">
                 <span class="icon">
-                  <font-awesome-icon size="sm" icon="tachometer-alt" />
+                  <font-awesome-icon size="sm" :icon="tab.icon" />
                 </span>
-                {{'MAIN_PANE.TABS.DASHBOARD' | translate }}
-              </a>
-            </li>
-            <li class="tab" :class="{'is-active': activeTab === 'accounts-detail'}">
-              <a @click="tabToggle('accounts-detail')">
-                <span class="icon">
-                  <font-awesome-icon size="sm" icon="th-list" />
-                </span>
-                {{'MAIN_PANE.TABS.ACCOUNTS' | translate }}
-              </a>
-            </li>
-            <li class="tab" :class="{'is-active': activeTab === 'recurrings'}">
-              <a @click="tabToggle('recurrings')">
-                <span class="icon">
-                  <font-awesome-icon size="sm" icon="recycle" />
-                </span>
-                {{'MAIN_PANE.TABS.RECURRINGS' | translate }}
+                {{ configTranslation(tab.name) }}
               </a>
             </li>
           </ul>
@@ -41,7 +25,7 @@
 
               <div class="container" id="mainScreen" v-show="$root.accounts.length">
                 <!-- TABS -->
-                <component :is="activeTab"></component>
+                <component :is="activeTab" v-if="activeTab"></component>
               </div>
             </div>
           </div>
@@ -59,9 +43,9 @@
 
 <script>
 // Components
-import dashboard from '@/components/MainPane/dashboard'
-import accountsDetail from '@/components/MainPane/accountsDetail'
-import recurrings from '@/components/MainPane/recurrings'
+import Dashboard from '@/components/MainPane/dashboard'
+import AccountsDetail from '@/components/MainPane/accountsDetail'
+import Recurrings from '@/components/MainPane/recurrings'
 
 // Third party
 import moment from 'moment'
@@ -69,33 +53,42 @@ import {ipcRenderer} from 'electron'
 import ChronoChart from '@/assets/ChronoChart.class'
 import chartJS from 'chart.js' // eslint-disable-line
 import { translate } from '../filters'
+import { configTranslation } from '@/util/translation'
 
 export default {
   name: 'main-pane',
-  components: {
-    dashboard,
-    accountsDetail,
-    recurrings
-  },
   data: function () {
     return {
-      activeTab: 'dashboard',
+      activeTab: Dashboard,
       reload: 1,
-      chronoChart: null
+      chronoChart: null,
+      tabs: [
+        {
+          name: '$MAIN_PANE.TABS.DASHBOARD',
+          component: Dashboard,
+          icon: 'tachometer-alt'
+        },
+        {
+          name: '$MAIN_PANE.TABS.ACCOUNTS',
+          component: AccountsDetail,
+          icon: 'th-list'
+        },
+        {
+          name: '$MAIN_PANE.TABS.RECURRINGS',
+          component: Recurrings,
+          icon: 'recycle'
+        }
+      ]
     }
   },
   methods: {
-    tabToggle: function (tab) {
-      this.$root.updateSQL(tab)
-      this.activeTab = tab
-    },
     doTranslate (value, option) {
       return translate(value, option)
     },
     openfile: function () {
       ipcRenderer.send('open-file')
     },
-
+    configTranslation(str) { return configTranslation(str) },
     showCreateModal: function () {
       // Go for AccountsPane component
       this.$root.$children[0].$children[0].showCreateModal()
@@ -130,8 +123,7 @@ export default {
     }
   },
   created: function () {
-    const tabToggle = this.tabToggle
-    this.tabToggle('dashboard')
+    const self = this
     moment.locale(this.$root.settings.language)
 
     this.$root.$on('toggle-tab', this.switchTab)
@@ -141,17 +133,16 @@ export default {
 
     ipcRenderer.on('toggle', function (event, args) {
       switch (args) {
+        default:
         case 0:
-          tabToggle('dashboard')
+          self.activeTab = Dashboard
           break
         case 1:
-          tabToggle('accounts-detail')
+          self.activeTab = AccountsDetail
           break
         case 2:
-          tabToggle('recurrings')
+          self.activeTab = Recurrings
           break
-        default:
-          tabToggle('dashboard')
       }
     })
 

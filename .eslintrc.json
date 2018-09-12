@@ -3,7 +3,7 @@
     "node": true,
     "es6": true
   },
-  "extends": "plugin:vue/base",
+  "extends": "plugin:vue/essential",
   "plugins": [
     "vue"
   ]

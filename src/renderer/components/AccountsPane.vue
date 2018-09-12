@@ -43,7 +43,7 @@
                 <div class="control select">
                   <select id="select-cur" name="a-cur" v-model="newAccount.currency">
                     <option value="" disabled selected>{{'CURRENCIES.DEFAULT' | translate}}</option>
-                    <option :value="currency.key" v-for="currency in currencies">{{currencyTranslation(currency.name)}}
+                    <option :value="currency.key" v-for="currency in currencies" :key="currency.key">{{currencyTranslation(currency.name)}}
                     </option>
                     <option value="money">{{ 'CURRENCIES.OTHER' | translate }}</option>
                   </select>
@@ -70,8 +70,7 @@
         </modal>
 
         <div id="account-list">
-          <article class="card notification is-dark is-paddingless"
-                   v-model="accounts" v-for="account in accounts" :key="account.name">
+          <article class="card notification is-dark is-paddingless" v-for="account in accounts" :key="account.name">
             <div class="card-header">
               <div class="card-header-icon">
                 <font-awesome-icon icon="university"/>

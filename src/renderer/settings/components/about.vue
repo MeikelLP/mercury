@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="columns" style="width:100%">
+  <div class="columns">
     <div class="column has-text-centered">
       <p class="title">Mercury</p>
       <p class="subtitle" >{{'SETTINGS.TABS.ABOUT.THANKS' | translate}}</p>

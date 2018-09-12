@@ -18,9 +18,9 @@
         </div>
         <div class="hero-body">
           <ul>
-            <li class="subtitle is-5" v-for="access in quickAccesses">
+            <li class="subtitle is-5" v-for="access in quickAccesses" :key="access.text">
               <span>• {{'MAIN_PANE.DASHBOARD.ACCESSES.OPEN' + (access.plural ? '_PLURAL' : '') | translate}} </span>
-              <span class="link ":class="'has-text-' + access.color" @click="send(access.ipcmsg)">{{ 'MAIN_PANE.DASHBOARD.ACCESSES.' + access.text | translate}} </span>
+              <span class="link" :class="'has-text-' + access.color" @click="send(access.ipcmsg)">{{ 'MAIN_PANE.DASHBOARD.ACCESSES.' + access.text | translate}} </span>
               <font-awesome-icon :class="'has-text-' + access.color" :icon="access.icon"/>
             </li>
           </ul>

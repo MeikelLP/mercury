@@ -1,55 +1,50 @@
 <template lang="html">
   <div :class="$root.settings.theme" id="app">
-    <section id="window" class="hero is-fullheight is-dark" style="padding: 1px">
-        <div class="hero-head">
-          <p class="title">
-            <span style="margin-left:2%; -webkit-app-region: drag">
-              <font-awesome-icon size="lg" class="has-text-info" icon="sliders-h" />
-              <span>{{'SETTINGS.TITLE' | translate}}</span>
-            </span>
-            <a onclick="window.close()" class="button is-outlined is-danger is-pulled-right">
-              <font-awesome-icon icon="times"/>
-            </a>
-          </p>
-        </div>
-        <div class="hero-body is-paddingless">
-          <div class="hero notification is-black is-centered is-fullwidth is-setting-pane is-paddingless">
-            <div class="hero-head tabs is-fullwidth">
-              <ul>
-                <li v-for="tab in tabs" :class="{'is-active': activeTab === tab.key}">
-                  <a @click="toggleTab(tab.key)">
+    <p class="title">
+      <span style="margin-left:2%; -webkit-app-region: drag">
+        <font-awesome-icon size="lg" class="has-text-info" icon="sliders-h" />
+        <span>{{'SETTINGS.TITLE' | translate}}</span>
+      </span>
+      <a onclick="window.close()" class="button is-outlined is-danger is-pulled-right">
+        <font-awesome-icon icon="times"/>
+      </a>
+    </p>
+    <ul class="tabs is-fullwidth">
+      <li v-for="tab in tabs" :key="tab.key" :class="{'is-active': activeTab === tab.component}">
+        <a @click="activeTab = tab.component">
                     <span class="icon">
                       <font-awesome-icon :icon="tab.icon"/>
                     </span>
-                    <span>{{ 'SETTINGS.TABS.TITLES.'+ tab.translate | translate}}</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div class="hero-body" style="padding-top: 0; padding-right: auto">
-              <transition name="fadeUp" mode="out-in">
-                <component v-bind:is="activeTab"></component>
-              </transition>
-            </div>
+          <span>{{ 'SETTINGS.TABS.TITLES.'+ tab.translate | translate}}</span>
+        </a>
+      </li>
+    </ul>
+    <section class="section">
+      <div class="container is-fluid">
+        <div>
+          <div>
+            <transition name="fadeUp" mode="out-in">
+              <component :is="activeTab"></component>
+            </transition>
           </div>
         </div>
-        <div class="hero-footer">
-          <a class="button is-outlined is-info is-pulled-right"  :class="{'is-loading' : loading}" @click="save()">
+      </div>
+    </section>
+    <section class="section">
+      <a class="button is-outlined is-info is-pulled-right"  :class="{'is-loading' : loading}" @click="save()">
             <span class="icon">
               <font-awesome-icon icon="save"/>
             </span>&nbsp;
-            {{ "SETTINGS.SAVE" | translate}}
-          </a>
-        </div>
+        {{ "SETTINGS.SAVE" | translate}}
+      </a>
     </section>
   </div>
 </template>
 
 <script>
-import general from '@/settings/components/general'
-import savedValues from '@/settings/components/savedValues'
-import exchange from '@/settings/components/exchange'
-import about from '@/settings/components/about'
+import General from './components/general'
+import SavedValues from './components/savedValues'
+import About from './components/about'
 
 import {ipcRenderer} from 'electron'
 import jsonfile from 'jsonfile'
@@ -57,17 +52,16 @@ import path from 'path'
 import Vue from 'vue'
 
 export default {
-  components: { general, savedValues, exchange, about },
   data: function () {
     return {
       loading: false,
-      activeTab: 'general',
+      activeTab: General,
       settings: this.$root.settings,
       tabs: [
-        {key: 'general', icon: 'cogs', translate: 'GENERAL'},
-        {key: 'savedValues', icon: 'bookmark', translate: 'SAVED_VALUES'},
+        {component: General, icon: 'cogs', translate: 'GENERAL'},
+        {component: SavedValues, icon: 'bookmark', translate: 'SAVED_VALUES'},
         // {key: 'exchange', icon: 'globe', translate: 'CURRENCIES'},
-        {key: 'about', icon: 'heart', translate: 'ABOUT'}
+        {component: About, icon: 'heart', translate: 'ABOUT'}
       ]
     }
   },

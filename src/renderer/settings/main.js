@@ -38,5 +38,3 @@ let app = new Vue({
   template: '<Settings/>',
   data: function () { return {settings: globSettings} }
 }).$mount('#app')
-
-console.debug(app)

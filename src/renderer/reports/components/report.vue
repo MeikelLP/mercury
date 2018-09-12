@@ -18,7 +18,7 @@
           <article class="is-main-pane">
             <div class="columns">
               <div class="column is-two-thirds">
-                <canvas id="myChart"height="225%"></canvas>
+                <canvas id="myChart" height="225%"></canvas>
               </div>
               <div class="column" style="border-left: 1px grey solid">
                 <p class="title is-marginless">{{'OPTIONS' | translate}}</p>

@@ -16,7 +16,7 @@
           <span>{{"OPERATION_PANE.INHERIT" | translate}}</span>
         </a>
       </p>
-      <div class="content" id="op-content">
+      <div id="op-content">
         <custom-field class="flex" fa="calendar">
           <input class="input " type="text"
             :placeholder="settings.dateFormat"
@@ -30,27 +30,39 @@
           <input class="input" :class="{'is-danger': this.errors[1]}" type="text" :placeholder="'0.00' | format" pattern="-?[\d,.]*" v-model="newOperation.amount" @keyup.enter="isEditing? confirmEdition():addOperation()">
         </custom-field>
 
-        <custom-field class="flex" fa="university" type="select is-primary">
-          <select id="op-account" name="op-account" v-model="newOperation.selectedAccount">
-            <option v-for="account in accounts" :value="account">{{account.name}}</option>
-          </select>
-        </custom-field>
-
-        <div class="field has-addons flex" data='op-add-btn'>
-          <div class="control">
-            <a class="button is-primary is-tag" id="op-type-btn">
+        <div class="field has-addons">
+          <p class="control">
+            <a class="button is-primary">
               <font-awesome-icon :icon="newOperation.type.icon" fixed-width />
             </a>
-          </div>
-          <div class="control select is-primary" style="margin:0; flex:1">
-            <select name="op-type" id="op-type" v-model="newOperation.type">
+          </p>
+          <p class="control">
+            <span class="select is-fullwidth">
+              <select id="op-account" name="op-account" v-model="newOperation.selectedAccount">
+                <option v-for="account in accounts" :key="account.name" :value="account">{{account.name}}</option>
+                <option>asdsa dsaq asfrasf afaf a dad sadsadsad sad</option>
+              </select>
+            </span>
+          </p>
+        </div>
+
+        <div class="field has-addons">
+          <p class="control">
+            <a class="button is-primary">
+              <font-awesome-icon :icon="newOperation.type.icon" fixed-width />
+            </a>
+          </p>
+          <p class="control">
+            <span class="select is-fullwidth">
+              <select name="op-type" id="op-type" v-model="newOperation.type">
                 <option value="" disabled>{{"OPERATION_TYPE.DEFAULT" | translate }}</option>
 
-                <option :value="operationType" v-for="operationType in operationTypes">
+                <option :value="operationType" v-for="operationType in operationTypes" :key="operationType.key">
                   {{configTranslation(operationType.name)}}
                 </option>
               </select>
-          </div>
+            </span>
+          </p>
         </div>
 
         <custom-field class="flex" fa="building">
@@ -64,7 +76,7 @@
             @blur="beneficiaryInput = false"
             @keyup.down="newOperation.beneficiary = bfiltered[0]" />
           <transition-group name="collapse" tag="ul" class="Results" v-if="bfiltered">
-            <li v-for="item, key in bfiltered" :key="key">
+            <li v-for="(item, key) in bfiltered" :key="key">
                 <small>{{ item }}</small>
             </li>
           </transition-group>
@@ -107,17 +119,19 @@
         <div class="field is-grouped">
           <p class="control">{{"State" | translate }}:</p>
           <p class="control">
-            <a class="button is-outlined is-primary is-small" @click="toggleState(newOperation.state)" v-model="newOperation.state" @keyup.enter="isEditing? confirmEdition():addOperation()">
-              <font-awesome-icon size="sm" :icon="newOperation.state.icon"/>
+            <a class="button is-outlined is-primary is-small"
+               @click="toggleState(newOperation.state)"
+               @keyup.enter="isEditing ? confirmEdition() : addOperation()"
+               :title="configTranslation(newOperation.state.name)">
+               <font-awesome-icon size="sm" :icon="newOperation.state.icon"/>
             </a>
           </p>
           <div class="control field has-addons flex">
-            <p class="control" v-for="state in states">
+            <p class="control" v-for="state in states" :key="state.key">
               <a class="button is-outlined is-dark is-small" :title="configTranslation(state.name)">
                 <font-awesome-icon size="sm" :icon="state.icon"/>
               </a>
             </p>
-            <small v-model="helper"></small>
           </div>
         </div>
 
@@ -140,7 +154,7 @@
   </div>
 </template>
 <script>
-import customField from '@/components/common/customField'
+  import CustomField from './common/customField'
 
 import {ipcRenderer} from 'electron'
 import jsonfile from 'jsonfile'
@@ -155,9 +169,7 @@ import OPERATION_TYPES from '../../config/operation-types'
 
 export default {
   name: 'operation-pane',
-  components: {
-    customField
-  },
+  components: { CustomField },
   data: function () {
     return {
       beneficiaryInput: false,

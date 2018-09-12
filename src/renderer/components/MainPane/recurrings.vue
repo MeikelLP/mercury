@@ -86,7 +86,7 @@
 
             <custom-field class="flex" fa="university" type="select is-primary">
               <select id="op-account" name="op-account" v-model="newRecurringOperation.selectedAccount">
-                <option v-for="account in accounts" :value="account">{{account.name}}</option>
+                <option v-for="account in accounts" :key="account.name" :value="account">{{account.name}}</option>
               </select>
             </custom-field>
 
@@ -99,7 +99,7 @@
               <div class="control select is-primary" style="margin:0; flex:1">
                 <select name="op-type" id="op-type" v-model="newRecurringOperation.type">
                   <option value="" disabled>{{"OPERATION_TYPE.DEFAULT" | translate }}</option>
-                  <option :value="operationType" v-for="operationType in operationTypes">
+                  <option :value="operationType" v-for="operationType in operationTypes" :key="operationType.key">
                     {{configTranslation(operationType.name)}}
                   </option>
                 </select>
@@ -192,7 +192,6 @@
 
 <script>
 import modal from '@/components/common/modal'
-import customField from '@/components/common/customField'
 
 import { ipcRenderer, remote } from 'electron'
 import moment from 'moment'
@@ -203,8 +202,7 @@ import OPERATION_TYPES from '../../../config/operation-types'
 
 export default {
   components: {
-    modal,
-    customField
+    modal
   },
   data: function () {
     return {

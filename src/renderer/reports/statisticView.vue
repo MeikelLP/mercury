@@ -18,7 +18,7 @@
               icon-right="sort-alpha-up"/>
         </span>
         <span class="column">
-          {{ 'REPORTS.STATISTIC.LEGEND' | translate}}
+          {{ 'REPORTS.STATISTIC.LEGEND' | translate }}
           <toggle-button
               :test="options.percent"
               :callback="toggleLegend"
@@ -27,7 +27,7 @@
         </span>
       </div>
       <label for="nb-cat">{{ 'REPORTS.STATISTIC.CATEGORIES' | translate}} ({{options.nbCat}}) :</label>
-      <input class="progress" type="range" name="nb-cat" v-model="options.nbCat" min="3" max="12" @change="throwCategories()">
+      <input class="progress" type="range" id="nb-cat" name="nb-cat" v-model="options.nbCat" min="3" max="12" @change="throwCategories()">
       <span>{{'REPORTS.COMMON.TIME_SPAN' | translate}}:</span>
       <div class="field has-addons">
         <div class="control">
@@ -35,7 +35,7 @@
         </div>
         <div class="control select is-primary">
           <select v-model="period" @change="throwPeriod()">
-            <option v-for="time in timesSpan" :value="time.value">{{time.label | translate}}</option>
+            <option v-for="time in timesSpan" :key="time.label" :value="time.value">{{time.label | translate}}</option>
           </select>
         </div>
       </div>
@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import toggleButton from '@/reports/components/toggleButton'
 import report from '@/reports/components/report'
 
 import { ipcRenderer } from 'electron'
@@ -58,7 +57,9 @@ import Vue from 'vue'
 import Migrator from '../../util/migrator'
 
 export default {
-  components: { toggleButton, report },
+  components: {
+    report
+  },
   data: function () {
     return {
       db: null,
