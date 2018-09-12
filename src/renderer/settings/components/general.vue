@@ -1,5 +1,5 @@
 <template>
-  <div :class="$root.settings.theme" id="window">
+  <div>
     <div class="field is-horizontal">
       <div class="field-label is-normal">
         <label for="theme" class="label">{{'SETTINGS.TABS.GENERAL.THEME' | translate}}</label>

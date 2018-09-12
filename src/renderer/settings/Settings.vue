@@ -1,7 +1,7 @@
 <template lang="html">
   <div :class="$root.settings.theme" id="app">
-    <p class="title">
-      <span style="margin-left:2%; -webkit-app-region: drag">
+    <p class="title" style="-webkit-app-region: drag">
+      <span style="margin-left:2%">
         <font-awesome-icon size="lg" class="has-text-info" icon="sliders-h" />
         <span>{{'SETTINGS.TITLE' | translate}}</span>
       </span>

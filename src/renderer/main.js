@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
 
-// CSS
-import 'bulma/css/bulma.css'
-import 'bulma-extensions/dist/bulma-extensions.min.css'
 import './assets/sass/master.sass'
 // Components
 import App from '@/App'
