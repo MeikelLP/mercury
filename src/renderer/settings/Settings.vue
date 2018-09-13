@@ -1,6 +1,6 @@
-<template lang="html">
+<template>
   <div :class="$root.settings.theme" id="app">
-    <div class="columns is-mobile">
+    <div class="columns is-mobile is-marginless">
       <div class="column" style="-webkit-app-region: drag">
         <span class="title">
           <span class="icon">
@@ -9,9 +9,9 @@
           <span>{{'SETTINGS.TITLE' | translate}}</span>
         </span>
       </div>
-      <div class="column is-narrow">
+      <div class="column is-narrow is-paddingless">
         <a onclick="window.close()" class="button is-outlined is-danger is-pulled-right">
-          <font-awesome-icon icon="times"/>
+          <font-awesome-icon icon="times" fixed-width/>
         </a>
       </div>
     </div>

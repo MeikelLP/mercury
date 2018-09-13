@@ -19,12 +19,12 @@
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label for="theme" class="label">{{'SETTINGS.TABS.GENERAL.DATEFORMAT' | translate}}</label>
+        <label for="dateFormat" class="label">{{'SETTINGS.TABS.GENERAL.DATEFORMAT' | translate}}</label>
       </div>
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <input type="text" class="input" v-model="settings.dateFormat"
+            <input id="dateFormat" type="text" class="input" v-model="settings.dateFormat"
                    :placeholder="'SETTINGS.TABS.GENERAL.SAMPLE_CALENDAR' | translate">
             <small class="is-small">{{'SETTINGS.TABS.GENERAL.TEST' | translate}}: {{ dateFormatTester }}</small>
           </div>
@@ -34,7 +34,7 @@
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label for="theme" class="label">{{'SETTINGS.TABS.GENERAL.LANGUAGE' | translate}}</label>
+        <label for="lang" class="label">{{'SETTINGS.TABS.GENERAL.LANGUAGE' | translate}}</label>
       </div>
       <div class="field-body">
         <div class="field has-addons">
@@ -45,7 +45,7 @@
           </div>
           <div class="control is-expanded">
             <span class="select is-fullwidth">
-              <select v-model="settings.language">
+              <select id="lang" v-model="settings.language">
                 <option value="de">Deutsch</option>
                 <option value="en">English</option>
                 <option value="fr">Français</option>
@@ -59,7 +59,7 @@
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label for="theme" class="label">{{'SETTINGS.TABS.GENERAL.DEFAULT_CURRENCY' | translate}}</label>
+        <label for="currency" class="label">{{'SETTINGS.TABS.GENERAL.DEFAULT_CURRENCY' | translate}}</label>
       </div>
       <div class="field-body">
         <div class="field has-addons">
@@ -70,7 +70,7 @@
           </div>
           <div class="control is-expanded">
             <span class="select is-fullwidth">
-              <select v-model="settings.defaultCurrency">
+              <select id="currency" v-model="settings.defaultCurrency">
                 <option :value="currency.key" v-for="currency in currencies" :key="currency.key">{{configTranslation(currency.name)}}
                 </option>
                 <option value="money">{{ 'CURRENCIES.OTHER' | translate }}</option>
@@ -83,7 +83,7 @@
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label for="theme" class="label">{{'SETTINGS.TABS.GENERAL.RECURRING' | translate}}</label>
+        <label for="timeSpan" class="label">{{'SETTINGS.TABS.GENERAL.RECURRING' | translate}}</label>
       </div>
       <div class="field-body">
         <div class="field has-addons">
@@ -92,7 +92,7 @@
           </div>
           <div class="control is-expanded select">
             <span class="select is-fullwidth">
-              <select class="select" v-model="settings.defaultTimeSpan">
+              <select id="timeSpan" v-model="settings.defaultTimeSpan">
                 <option value="days">{{ (settings.defaultOffset > 1 ? 'TIME_SPAN.PLURAL.':'TIME_SPAN.SINGULAR.')+'days'|
                   translate}}
                 </option>
