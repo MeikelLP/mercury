@@ -7,56 +7,55 @@
       </transition>
     </p>
     <!-- createAccount modal -->
-    <modal :active="createModalShown" icon="university" :close="closeModal">
-      <p class="title">{{'ACCOUNTS_PANE.MODAL.TITLE' | translate }}</p>
-      <form>
+    <modal :active="createModalShown" icon="university" :close="closeModal" :title="'ACCOUNTS_PANE.MODAL.TITLE' | translate">
+      <div class="field has-addons is-horizontal">
+        <p class="control">
+          <a class="button is-primary">
+            <font-awesome-icon icon="tag" fixed-width/>
+          </a>
+        </p>
+        <p class="control is-expanded">
+          <input class="input" type="text" :class="{'is-danger': errorName}"
+                 :placeholder="'ACCOUNTS_PANE.MODAL.PLACEHOLDER' | translate"
+                 v-model="newAccount.name"
+                 autofocus>
+        </p>
+      </div>
+      <div class="field-body">
         <div class="field has-addons">
           <p class="control">
-            <a class="button is-tag is-primary">
-              <font-awesome-icon size="sm" icon="tag"/>
+            <a class="button is-primary">
+              <font-awesome-icon :icon="currencyIcon(this.newAccount.currency)" fixed-width />
             </a>
           </p>
           <p class="control is-expanded">
-            <input class="input" type="text" :class="{'is-danger': errorName}"
-                   :placeholder="'ACCOUNTS_PANE.MODAL.PLACEHOLDER' | translate"
-                   v-model="newAccount.name"
-                   autofocus>
-          </p>
-        </div>
-        <div class="columns">
-          <div class="column is-4 field has-addons">
-            <div class="control">
-              <a class="button is-tag is-primary">
-                <font-awesome-icon :icon="currencyIcon(this.newAccount.currency)" fixed-width />
-              </a>
-            </div>
-            <div class="control select">
-              <select id="select-cur" name="a-cur" v-model="newAccount.currency">
+            <span class="select is-fullwidth">
+              <select v-model="newAccount.currency">
                 <option value="" disabled selected>{{'CURRENCIES.DEFAULT' | translate}}</option>
                 <option :value="currency.key" v-for="currency in currencies" :key="currency.key">{{currencyTranslation(currency.name)}}
                 </option>
                 <option value="money">{{ 'CURRENCIES.OTHER' | translate }}</option>
               </select>
-            </div>
-          </div>
-          <div class="column is-8 field has-addons">
-            <div class="control">
-              <p class="button is-tag is-primary">{{'ACCOUNTS_PANE.MODAL.CURRENT_AMOUNT' | translate }}</p>
-            </div>
-            <p class="control">
-              <input class="input" type="number" :placeholder="'0.00' | format" v-model="newAccount.amount">
-            </p>
-          </div>
-        </div>
-        <div class="field">
-          <p class="control is-pulled-left">
-            <a class="button is-info is-outlined" :class="{'loading': loading}" @click="createNewAccount()">{{'CREATE' | translate }}</a>
-          </p>
-          <p class="control is-pulled-right">
-            <a class="button is-danger is-outlined" :class="{'loading': loading}" @click="closeModal()">{{"CANCEL" | translate }}</a>
+            </span>
           </p>
         </div>
-      </form>
+        <div class="field has-addons">
+          <div class="control">
+            <p class="button is-tag is-primary">{{'ACCOUNTS_PANE.MODAL.CURRENT_AMOUNT' | translate }}</p>
+          </div>
+          <p class="control is-expanded">
+            <input class="input" type="number" :placeholder="'0.00' | format" v-model="newAccount.amount">
+          </p>
+        </div>
+      </div>
+      <template slot="footer">
+        <a class="button is-info is-outline" :class="{'loading': loading}" @click="createNewAccount()">
+          {{'CREATE' | translate }}
+        </a>
+        <a class="button is-danger is-outlined" :class="{'loading': loading}" @click="closeModal()">
+          {{"CANCEL" | translate }}
+        </a>
+      </template>
     </modal>
 
     <div class="columns is-multiline">
