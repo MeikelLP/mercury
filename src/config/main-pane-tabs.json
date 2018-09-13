@@ -1,0 +1,12 @@
+[
+  {
+    
+    "name": "$MAIN_PANE.TABS.DASHBOARD"
+  },
+  {
+    "name": "$MAIN_PANE.TABS.ACCOUNTS"
+  },
+  {
+    "name": "$MAIN_PANE.TABS.RECURRINGS"
+  }
+]
