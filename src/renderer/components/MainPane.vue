@@ -21,7 +21,7 @@
       <component :is="activeTab" v-if="activeTab" v-show="$root.accounts.length"></component>
     </div>
     <section class="section" id="chart-area">
-      <canvas id="chronoChart" height="75"></canvas>
+      <canvas id="chronoChart"></canvas>
     </section>
   </div>
 </template>

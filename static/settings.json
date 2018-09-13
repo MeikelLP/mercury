@@ -10,18 +10,21 @@
     null,
     null,
     null,
+    null,
     null
   ],
   "categories": [
     null,
     null,
-    "Testing"
+    "Testing",
+    null
   ],
   "labels": [
     null,
     "Test",
     null,
-    "Test 1"
+    "Test 1",
+    null
   ],
   "lastfile": "G:\\Clouds\\Nextcloud (at) meikellp.de\\Privat\\finance.mcy",
   "useDatepicker": true

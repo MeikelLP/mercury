@@ -17,7 +17,7 @@
         </a>
       </p>
       <div id="op-content">
-        <custom-field class="flex" fa="calendar">
+        <custom-field fa="calendar">
           <input class="input " type="text"
             :placeholder="settings.dateFormat"
             v-model="newOperation.date"
@@ -26,7 +26,7 @@
             @keyup.enter="isEditing? confirmEdition():addOperation()">
         </custom-field>
 
-        <custom-field class="flex" :fa="operationCurrency">
+        <custom-field :fa="operationCurrency">
           <input class="input" :class="{'is-danger': this.errors[1]}" type="text" :placeholder="'0.00' | format" pattern="-?[\d,.]*" v-model="newOperation.amount" @keyup.enter="isEditing? confirmEdition():addOperation()">
         </custom-field>
 
@@ -36,9 +36,9 @@
               <font-awesome-icon :icon="newOperation.type.icon" fixed-width />
             </a>
           </p>
-          <p class="control">
+          <p class="control is-expanded">
             <span class="select is-fullwidth">
-              <select id="op-account" name="op-account" v-model="newOperation.selectedAccount">
+              <select v-model="newOperation.selectedAccount">
                 <option v-for="account in accounts" :key="account.name" :value="account">{{account.name}}</option>
                 <option>asdsa dsaq asfrasf afaf a dad sadsadsad sad</option>
               </select>
@@ -52,9 +52,9 @@
               <font-awesome-icon :icon="newOperation.type.icon" fixed-width />
             </a>
           </p>
-          <p class="control">
+          <p class="control is-expanded">
             <span class="select is-fullwidth">
-              <select name="op-type" id="op-type" v-model="newOperation.type">
+              <select v-model="newOperation.type">
                 <option value="" disabled>{{"OPERATION_TYPE.DEFAULT" | translate }}</option>
 
                 <option :value="operationType" v-for="operationType in operationTypes" :key="operationType.key">
@@ -349,9 +349,12 @@ export default {
       this.endOperation('cancel')
     },
 
-    editOperation: function (op) {
+    editOperation: function (operation) {
+      const op = Object.assign({}, operation);
+      op.state = OPERATION_STATES.filter(x => x.key === op.state)[0]
+      op.type = OPERATION_TYPES.filter(x => x.key === op.type)[0]
+      op.selectedAccount = this.accounts.find(a => a.name === op.selectedAccount.name)
       this.newOperation = op
-      this.newOperation.selectedAccount = this.accounts.find(a => a.name === op.selectedAccount.name)
       this.isEditing = true
     },
 

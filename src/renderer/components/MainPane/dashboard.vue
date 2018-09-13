@@ -5,7 +5,7 @@
         {{'MAIN_PANE.DASHBOARD.TOP' | translate}}
         <small class="subtitle">{{ lastMonth }}</small>
       </h2>
-      <canvas id="doughnut" height="250%" style="margin-top: 3vh; margin-bottom: -5vh"></canvas>
+      <canvas id="doughnut"></canvas>
     </div>
     <div class="column is-full">
       <h2 class="title is-2">{{'MAIN_PANE.DASHBOARD.QUICK_ACCESS' | translate}}</h2>
@@ -131,7 +131,7 @@ export default {
       options: {
         rotation: Math.PI,
         circumference: Math.PI,
-        responsive: true,
+        responsive: false,
         legend: {
           position: 'bottom'
         },

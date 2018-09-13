@@ -1,24 +1,24 @@
-<template lang="html">
+<template>
   <nav class="field is-grouped">
     <custom-field is-control="true" fa="university" type="select is-primary" >
-      <select v-model="filters.account" @change="$root.$emit('update-filters')" style="width: 12vw">
+      <select v-model="filters.account" @change="$root.$emit('update-filters')">
         <option v-for="account in accounts" :value="account" :key="account.name">{{account.name}}</option>
       </select>
     </custom-field>
 
     <custom-field is-control="true" fa="calendar" type="select is-primary">
-      <select v-model="filters.date" @change="$root.$emit('update-filters')" style="width: 12vw">
+      <select v-model="filters.date" @change="$root.$emit('update-filters')">
         <option v-for="time in timesSpan" :value="time.value" :key="time.label">{{time.label | translate}}</option>
       </select>
     </custom-field>
 
     <custom-field is-control="true" fa="adjust" type="select is-primary" >
-      <select v-model="filters.state" @change="$root.$emit('update-filters')" style="width: 8vw">
+      <select v-model="filters.state" @change="$root.$emit('update-filters')">
         <option v-for="state in states" :value="state.key" :key="state.name">{{ configTranslation(state.name) }}</option>
       </select>
     </custom-field>
     <custom-field is-control="true" fa="balance-scale" type="select is-primary" >
-      <select v-model="filters.amount" @change="$root.$emit('update-filters')" style="width: 8vw">
+      <select v-model="filters.amount" @change="$root.$emit('update-filters')">
         <option v-for="amount in amounts" :value="amount.value" :key="amount.label">{{amount.label | translate}}</option>
       </select>
     </custom-field>

@@ -3,7 +3,7 @@
     <div class="control">
       <a class="button is-primary is-tag"><font-awesome-icon :icon="fa" fixed-width /></a>
     </div>
-    <div class="control" :class="type">
+    <div class="control is-expanded" :class="type">
       <slot></slot>
     </div>
   </div>
