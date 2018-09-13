@@ -1,6 +1,6 @@
-<template lang="html">
-  <div class="tile is-parent is-paddingless is-2 hero is-fullheight" id="op-pane">
-    <article class="tile is-child notification is-black">
+<template>
+  <section class="section column is-one-fifth">
+    <article>
       <p class="title" id="op-title">{{isEditing ? "OPERATION_PANE.EDITING":"OPERATION_PANE.DEFAULT" | translate }}</p>
       <p class="subtitle level" v-if="isEditing">
         <a class="level-left button is-danger is-small" @click="deleteOperation()">
@@ -151,7 +151,7 @@
         </div>
       </div>
     </article>
-  </div>
+  </section>
 </template>
 <script>
   import CustomField from './common/customField'

@@ -1,15 +1,9 @@
 <template>
   <div id="app" :class="$root.settings.theme">
     <section class="columns">
-      <div class="column">
-        <accounts-pane />
-      </div>
-      <div class="column">
-        <main-pane />
-      </div>
-      <div class="column is-one-fifth">
-        <operation-pane />
-      </div>
+      <accounts-pane />
+      <main-pane />
+      <operation-pane />
     </section>
   </div>
 </template>

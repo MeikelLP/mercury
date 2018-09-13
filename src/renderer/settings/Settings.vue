@@ -18,9 +18,9 @@
     <ul class="tabs is-fullwidth">
       <li v-for="tab in tabs" :key="tab.key" :class="{'is-active': activeTab === tab.component}">
         <a @click="activeTab = tab.component">
-                    <span class="icon">
-                      <font-awesome-icon :icon="tab.icon"/>
-                    </span>
+          <span class="icon">
+            <font-awesome-icon :icon="tab.icon"/>
+          </span>
           <span>{{ 'SETTINGS.TABS.TITLES.'+ tab.translate | translate}}</span>
         </a>
       </li>

@@ -1,43 +1,28 @@
-<template lang="html">
-  <div class="tile is-parent  is-2 is-paddingless" id="main-pane">
-    <div class="tile is-parent is-vertical is-paddingless">
-      <section class="tile is-child hero notification is-paddingless is-dark is-bottomless">
-        <div class="tabs is-boxed is-small is-fullwidth is-bottomless">
-          <ul>
-            <li class="tab" v-for="tab in tabs" :class="{'is-active': activeTab === tab.component}" :key="tab.name">
-              <a @click="activeTab = tab.component">
+<template>
+  <div class="column">
+    <div class="tabs is-fullwidth">
+      <ul>
+        <li class="tab" v-for="tab in tabs" :class="{'is-active': activeTab === tab.component}" :key="tab.name">
+          <a @click="activeTab = tab.component">
                 <span class="icon">
                   <font-awesome-icon size="sm" :icon="tab.icon" />
                 </span>
-                {{ configTranslation(tab.name) }}
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="tile data" id="dashboard">
-          <div class="tile is-parent is-vertical ">
-            <div class="hero is-marginless">
-              <!-- NO DATA -->
-              <div class="container has-text-centered" v-show="!$root.accounts.length" style="width: 64vw; padding-top:25%">
-                <p class="title">{{ 'MAIN_PANE.NO_DATA.TITLE' | translate}}</p>
-                <p class="subtitle" v-html="doTranslate('MAIN_PANE.NO_DATA.SUBTITLE')"></p>
-              </div>
-
-              <div class="container" id="mainScreen" v-show="$root.accounts.length">
-                <!-- TABS -->
-                <component :is="activeTab" v-if="activeTab"></component>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </section>
-      <section id="chart-area" class="tile is-child hero notification is-paddingless is-black">
-        <div>
-          <canvas id="chronoChart" height="75" style="position:relative; top:1rem;"></canvas>
-        </div>
-      </section>
+            {{ configTranslation(tab.name) }}
+          </a>
+        </li>
+      </ul>
     </div>
+    <div>
+      <div class="has-text-centered" v-show="!$root.accounts.length">
+        <p class="title">{{ 'MAIN_PANE.NO_DATA.TITLE' | translate}}</p>
+        <p class="subtitle" v-html="doTranslate('MAIN_PANE.NO_DATA.SUBTITLE')"></p>
+      </div>
+
+      <component :is="activeTab" v-if="activeTab" v-show="$root.accounts.length"></component>
+    </div>
+    <section class="section" id="chart-area">
+      <canvas id="chronoChart" height="75"></canvas>
+    </section>
   </div>
 </template>
 

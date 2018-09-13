@@ -1,5 +1,5 @@
 <template>
-  <section class="section">
+  <section class="column is-one-fifth section">
     <p class="title">
       {{'ACCOUNTS_PANE.DEFAULT'| translate}}
       <transition name="slide-fade">
@@ -60,7 +60,7 @@
     </modal>
 
     <div class="columns is-multiline">
-      <div class="column">
+      <div class="column is-full">
         <div class="card" v-for="account in accounts" :key="account.name">
           <div class="card-header">
             <div class="card-header-icon">

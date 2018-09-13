@@ -1,30 +1,23 @@
-<template lang="html">
-  <div class="tile ancestor notification is-dark is-paddingless">
-    <div class="tile is-parent is-vertical" style="padding-bottom: 0">
-      <div class="tile is-child is-vertical notification hero is-black">
-        <div class="level is-marginless hero-head">
-          <p class="level-left title is-marginless">{{'MAIN_PANE.DASHBOARD.TOP' | translate}}</p>
-          <p class="level-right subtitle is-6 is-marginless">{{ lastMonth }}</p>
-        </div>
-        <div class="hero-body">
-          <canvas id="doughnut" height="250%" style="margin-top: 3vh; margin-bottom: -5vh"></canvas>
-        </div>
-      </div>
+<template>
+  <div class="columns is-multiline">
+    <div class="column is-full">
+      <h2 class="title is-2">
+        {{'MAIN_PANE.DASHBOARD.TOP' | translate}}
+        <small class="subtitle">{{ lastMonth }}</small>
+      </h2>
+      <canvas id="doughnut" height="250%" style="margin-top: 3vh; margin-bottom: -5vh"></canvas>
     </div>
-    <div class="tile is-parent is-vertical" style="padding-bottom: 0">
-      <div class="tile is-child is-vertical hero notification is-black">
-        <div class="level is-marginless hero-head">
-          <p class="level-item title">{{'MAIN_PANE.DASHBOARD.QUICK_ACCESS' | translate}}</p>
-        </div>
-        <div class="hero-body">
-          <ul>
-            <li class="subtitle is-5" v-for="access in quickAccesses" :key="access.text">
-              <span>• {{'MAIN_PANE.DASHBOARD.ACCESSES.OPEN' + (access.plural ? '_PLURAL' : '') | translate}} </span>
-              <span class="link" :class="'has-text-' + access.color" @click="send(access.ipcmsg)">{{ 'MAIN_PANE.DASHBOARD.ACCESSES.' + access.text | translate}} </span>
-              <font-awesome-icon :class="'has-text-' + access.color" :icon="access.icon"/>
-            </li>
-          </ul>
-        </div>
+    <div class="column is-full">
+      <h2 class="title is-2">{{'MAIN_PANE.DASHBOARD.QUICK_ACCESS' | translate}}</h2>
+      <div class="buttons">
+        <button class="button is-outlined" v-for="access in quickAccesses" :class="'is-' + access.color" :key="access.text" @click="send(access.ipcmsg)">
+          <span class="icon">
+            <font-awesome-icon :icon="access.icon"/>
+          </span>
+          <span>
+            {{ 'MAIN_PANE.DASHBOARD.ACCESSES.' + access.text | translate}}
+          </span>
+        </button>
       </div>
     </div>
   </div>

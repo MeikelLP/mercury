@@ -1,5 +1,5 @@
 <template lang="html">
-  <div style="max-height: 60vh">
+  <div>
     <filter-bar />
     <br>
 
