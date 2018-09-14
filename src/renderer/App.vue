@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="$root.settings.theme">
+  <div id="app">
     <section class="columns">
       <accounts-pane />
       <main-pane />

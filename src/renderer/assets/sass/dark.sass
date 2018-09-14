@@ -1,4 +1,4 @@
-@import "~bulma/sass/utilities/all"
+@import "master"
 
 $text: $white-ter
 $text-strong: darken($text, 10)
@@ -27,8 +27,12 @@ $input-color: $white-bis
 $input-border-color: $white-ter
 $input-hover-border-color: $white-bis
 
-@import "~bulma/sass/base/generic"
+html.dark
+  background-color: $body-background-color
 
 .dark
+  @import "~bulma/sass/base/helpers"
+  @import "~bulma/sass/grid/all"
+  @import "~bulma/sass/layout/all"
   @import "~bulma/sass/components/all"
   @import "~bulma/sass/elements/all"

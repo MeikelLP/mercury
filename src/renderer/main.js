@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import axios from 'axios'
 
-import './assets/sass/master.sass'
+import './assets/sass/dark.sass'
+import './assets/sass/light.sass'
 // Components
 import App from '@/App'
 // nodeModules
@@ -23,13 +24,11 @@ let globSettings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
 new Vue({
   components: { App },
   template: '<App/>',
-  data: function () {
-    return {
-      settings: globSettings,
-      accounts: [],
-      unsaved: false,
-      db: null
-    }
+  data: {
+    settings: globSettings,
+    accounts: [],
+    unsaved: false,
+    db: null
   },
   methods: {
     // Functions
@@ -52,5 +51,11 @@ new Vue({
   mounted: function () {
     // Sets locale
     moment.locale(globSettings.language)
+    document.documentElement.className = this.settings.theme
+  },
+  watch: {
+    'settings.theme'(){
+      document.documentElement.className = this.settings.theme
+    }
   }
 }).$mount('#app')

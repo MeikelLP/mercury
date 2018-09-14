@@ -2,7 +2,8 @@ import Vue from 'vue'
 import axios from 'axios'
 
 // CSS
-import '../assets/sass/master.sass'
+import '../assets/sass/dark.sass'
+import '../assets/sass/light.sass'
 // Components
 import BalanceView from '@/reports/balanceView.vue'
 // nodeModules
@@ -18,5 +19,13 @@ Vue.http = Vue.prototype.$http = axios
 new Vue({
   components: { BalanceView },
   template: '<balance-view />',
-  data: function () { return {settings: globSettings} }
+  data: {settings: globSettings},
+  mounted() {
+    document.documentElement.className = this.settings.theme
+  },
+  watch: {
+    'settings.theme'(){
+      document.documentElement.className = this.settings.theme
+    }
+  }
 }).$mount('#app')

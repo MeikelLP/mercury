@@ -2,7 +2,8 @@ import Vue from 'vue'
 import axios from 'axios'
 
 // CSS
-import '../assets/sass/master.sass'
+import '../assets/sass/dark.sass'
+import '../assets/sass/light.sass'
 // Components
 import Settings from '@/settings/Settings.vue'
 // nodeModules
@@ -20,5 +21,13 @@ Vue.http = Vue.prototype.$http = axios
 let app = new Vue({
   components: { Settings },
   template: '<Settings/>',
-  data: function () { return {settings: globSettings} }
+  data: {settings: globSettings},
+  mounted() {
+    document.documentElement.className = this.settings.theme
+  },
+  watch: {
+    'settings.theme'(){
+      document.documentElement.className = this.settings.theme
+    }
+  }
 }).$mount('#app')
