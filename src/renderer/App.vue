@@ -1,10 +1,13 @@
 <template>
   <div id="app">
-    <section class="columns">
-      <accounts-pane />
-      <main-pane />
-      <operation-pane />
-    </section>
+    <div class="columns">
+      <div class="column is-one-fifth">
+        <sidebar/>
+      </div>
+      <div class="column">
+        <router-view></router-view>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -17,13 +20,15 @@
   import Database from '@/assets/Database.class'
   import {ipcRenderer} from 'electron'
   import jsonfile from 'jsonfile'
+  import Sidebar from './components/Sidebar'
 
   export default {
     name: 'mercury',
     components: {
-      AccountsPane,
-      MainPane,
-      OperationPane
+      Sidebar,
+      // AccountsPane,
+      // MainPane,
+      // OperationPane
     },
     methods: {
       updateAccountsList: function () {

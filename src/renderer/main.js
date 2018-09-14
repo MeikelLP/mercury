@@ -3,13 +3,15 @@ import axios from 'axios'
 import Buefy from 'buefy'
 
 import './assets/sass/all.sass'
-// Components
-import App from '@/App'
 // nodeModules
 import jsonfile from 'jsonfile'
 import path from 'path'
 import moment from 'moment'
 import {ipcRenderer} from 'electron'
+
+import App from './App'
+import router from './router'
+
 import './icons'
 import './filters'
 
@@ -26,6 +28,7 @@ Vue.use(Buefy, {
 
 /* eslint-disable no-new */
 new Vue({
+  router,
   components: { App },
   template: '<App/>',
   data: {
