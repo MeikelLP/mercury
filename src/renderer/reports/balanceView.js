@@ -2,8 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 // CSS
-import '../assets/sass/dark.sass'
-import '../assets/sass/light.sass'
+import '../assets/sass/all.sass'
 // Components
 import BalanceView from '@/reports/balanceView.vue'
 // nodeModules

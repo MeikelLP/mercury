@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import axios from 'axios'
+import Buefy from 'buefy'
 
-import './assets/sass/dark.sass'
-import './assets/sass/light.sass'
+import './assets/sass/all.sass'
 // Components
 import App from '@/App'
 // nodeModules
@@ -19,6 +19,10 @@ Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 let globSettings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
+
+Vue.use(Buefy, {
+  defaultIconPack: 'fa'
+})
 
 /* eslint-disable no-new */
 new Vue({

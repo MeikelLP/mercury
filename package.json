@@ -92,6 +92,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.3.1",
     "@fortawesome/vue-fontawesome": "^0.1.1",
     "axios": "^0.16.1",
+    "buefy": "^0.6.7",
     "bulma": "0.7.1",
     "bulma-extensions": "^1.0.14",
     "chart.js": "^2.7.2",
