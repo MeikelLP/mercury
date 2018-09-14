@@ -3,6 +3,7 @@ import i18njs from 'i18njs'
 import Vue from 'vue'
 import moment from 'moment'
 import path from 'path'
+import {configTranslation} from './util/translation'
 
 let globSettings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
 const decimalSeperator = 1.1.toLocaleString(globSettings.language).substring(1, 2)
@@ -12,6 +13,9 @@ i18njs.setLang(globSettings.language)
 
 Vue.filter('translate', (value, option) => {
   return translate(value, option)
+})
+Vue.filter('configTranslate', (value) => {
+  return configTranslation(value)
 })
 Vue.filter('date', (value) => {
   let formattedMoment = moment(value).format(globSettings.dateFormat)

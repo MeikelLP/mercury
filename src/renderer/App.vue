@@ -12,12 +12,9 @@
 </template>
 
 <script>
-  import AccountsPane from '@/components/AccountsPane'
-  import MainPane from '@/components/MainPane'
-  import OperationPane from '@/components/OperationPane'
   import path from 'path'
 
-  import Database from '@/assets/Database.class'
+  import Database from './assets/Database.class'
   import {ipcRenderer} from 'electron'
   import jsonfile from 'jsonfile'
   import Sidebar from './components/Sidebar'
@@ -25,10 +22,7 @@
   export default {
     name: 'mercury',
     components: {
-      Sidebar,
-      // AccountsPane,
-      // MainPane,
-      // OperationPane
+      Sidebar
     },
     methods: {
       updateAccountsList: function () {

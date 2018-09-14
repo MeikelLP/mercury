@@ -1,89 +1,36 @@
 <template>
   <section class="hero is-fullheight">
     <div class="hero-head">
-      <h2 class="title is-2">Mercury</h2>
       <aside class="menu">
-        <p class="menu-label">
-          General
-        </p>
         <ul class="menu-list">
           <li>
-            <router-link to="/accounts">
-              <span class="menu-icon">
-                <font-awesome-icon icon="users" fixed-width/>
-              </span>
-              <span>Accounts</span>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/operations">
-              <span class="menu-icon">
-                <font-awesome-icon icon="database" fixed-width/>
-              </span>
-              <span>Operations</span>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/dashboard">
-              <span class="menu-icon">
-                <font-awesome-icon icon="tachometer-alt" fixed-width/>
-              </span>
-              <span>Dashboard</span>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/accountDetails">
-              <span class="menu-icon">
-                <font-awesome-icon icon="chart-bar" fixed-width/>
-              </span>
-              <span>Account Details</span>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/recurrings">
-              <span class="menu-icon">
-                <font-awesome-icon icon="recycle" fixed-width/>
-              </span>
-              <span>Recurrings</span>
+            <router-link to="/home" class="has-text-centered">
+              <span class="title is-2">Mercury</span>
             </router-link>
           </li>
         </ul>
-        <p class="menu-label">
-          Reports
-        </p>
-        <ul class="menu-list">
-          <li>
-            <router-link to="/report/chrono">
-              <span class="menu-icon">
-                <font-awesome-icon icon="chart-area" fixed-width/>
-              </span>
-              <span>CHRONO CHART</span>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/report/statistics">
-              <span class="menu-icon">
-                <font-awesome-icon icon="chart-pie" fixed-width/>
-              </span>
-              <span>STATS</span>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/report/balance">
-              <span class="menu-icon">
-                <font-awesome-icon icon="chart-line" fixed-width/>
-              </span>
-              <span>BALANCE</span>
-            </router-link>
-          </li>
-        </ul>
+        <div v-for="group in Object.keys(routes)" :key="group">
+          <p class="menu-label has-text-right">
+            {{ group | configTranslate }}
+          </p>
+          <ul class="menu-list">
+            <li v-for="route in routes[group]" :key="route.path">
+              <router-link :to="route.path" :class="{'is-active': $route.path === route.path}" class="has-text-right">
+                <span>{{ route.name | configTranslate }}</span>
+                <span class="menu-icon">
+                  <font-awesome-icon :icon="route.meta.icon" fixed-width/>
+                </span>
+              </router-link>
+            </li>
+          </ul>
+        </div>
       </aside>
     </div>
     <div class="hero-foot">
       <aside class="menu">
         <ul class="menu-list">
           <li>
-            <router-link to="/settings">
+            <router-link to="/settings" :class="{'is-active': $route.path === '/settings'}">
               <span class="menu-icon">
                 <font-awesome-icon icon="cogs" fixed-width/>
               </span>
@@ -97,7 +44,23 @@
 </template>
 
 <script>
+  import ROUTES from '../router/routes'
+  import { groupBy } from '../../util/common'
+  import { hasAccounts } from '../../util/database'
+
+  const relevantRoutes = ROUTES.filter(r => r.hasOwnProperty('meta') && r.meta.hasOwnProperty('requiresAccount'))
+
   export default {
-    name: 'Sidebar'
+    name: 'Sidebar',
+    data() {
+      return {
+        routes: groupBy(relevantRoutes, r => r.meta.group)
+      }
+    },
+    computed: {
+      hasAccounts () {
+        return hasAccounts(this.$root.db)
+      }
+    }
   }
 </script>
