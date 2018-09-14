@@ -12,6 +12,13 @@
     "name": "Delni",
     "email": "nicolas.delauney@outlook.fr"
   },
+  "contributors": [
+    {
+      "name": "MeikelLP",
+      "email": "meikellp@users.noreply.github.com",
+      "url": "https://meikellp.de"
+    }
+  ],
   "repository": "https://github.com/Delni/mercury",
   "license": "MIT",
   "main": "./dist/electron/main.js",
