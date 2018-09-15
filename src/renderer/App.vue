@@ -36,18 +36,6 @@
       }
     },
     created: function () {
-      let $root = this.$root
-      if (!$root.settings.lastfile) {
-        $root.db = new Database()
-      } else {
-        try {
-          $root.db = new Database($root.settings.lastfile)
-          ipcRenderer.send('file-to-save', $root.settings.lastfile)
-        } catch (e) {
-          console.warn(e.message)
-          $root.db = new Database()
-        }
-      }
       this.updateAccountsList()
 
       this.$root.$on('add-operation', this.updateAccountsList)

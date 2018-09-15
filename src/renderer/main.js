@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import axios from 'axios'
+import Axios from 'axios'
 import Buefy from 'buefy'
 
 import './assets/sass/all.sass'
@@ -10,17 +10,23 @@ import moment from 'moment'
 import {ipcRenderer} from 'electron'
 
 import App from './App'
-import router from './router'
+import Router from './router'
+import { store, loadFromFile } from './store'
 
 import './icons'
 import './filters'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
-Vue.http = Vue.prototype.$http = axios
+Vue.http = Vue.prototype.$http = Axios
 
 Vue.config.productionTip = false
 
 let globSettings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
+
+
+if (globSettings.lastfile) {
+  loadFromFile(globSettings.lastfile)
+}
 
 Vue.use(Buefy, {
   defaultIconPack: 'fa'
@@ -28,12 +34,12 @@ Vue.use(Buefy, {
 
 /* eslint-disable no-new */
 new Vue({
-  router,
+  router: Router,
+  store: store,
   components: { App },
   template: '<App/>',
   data: {
     settings: globSettings,
-    accounts: [],
     unsaved: false,
     db: null
   },

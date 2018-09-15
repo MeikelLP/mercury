@@ -1,5 +1,5 @@
 <template>
-  <section class="column is-one-fifth section">
+  <section class="section">
     <p class="title">
       {{'ACCOUNTS_PANE.DEFAULT'| translate}}
       <transition name="slide-fade">
@@ -59,8 +59,8 @@
     </modal>
 
     <div class="columns is-multiline">
-      <div class="column is-full">
-        <div class="card" v-for="account in accounts" :key="account.name">
+      <div class="column is-half" v-for="account in accounts" :key="account.name">
+        <div class="card">
           <div class="card-header">
             <div class="card-header-icon">
               <font-awesome-icon icon="university"/>
@@ -108,7 +108,7 @@
         </div>
       </div>
 
-      <div class="column">
+      <div class="column is-half">
         <a class="button is-primary is-outlined is-fullwidth has-text-centered" @click="showCreateModal()">
           <span class="icon">
             <font-awesome-icon icon="plus-square"></font-awesome-icon>
