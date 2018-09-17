@@ -1,10 +1,11 @@
 <template>
   <section class="section">
+    currently using: {{lastFile}}
     <p class="title">
       {{'ACCOUNTS_PANE.DEFAULT'| translate}}
-      <transition name="slide-fade">
+      <span class="icon">
         <font-awesome-icon icon="exclamation-circle" size="xs" class="has-text-warning" v-if="unsaved"/>
-      </transition>
+      </span>
     </p>
     <!-- createAccount modal -->
     <modal :active="createModalShown" icon="university" :close="closeModal" :title="'ACCOUNTS_PANE.MODAL.TITLE' | translate">
@@ -125,15 +126,13 @@
 <script>
 import modal from '@/components/common/modal'
 
-import Database from '@/assets/Database.class'
 import {ipcRenderer, remote} from 'electron'
-import jsonfile from 'jsonfile'
-import path from 'path'
 import Vue from 'vue'
 import { currencyIcon } from '../util/icons'
 import { configTranslation } from '../util/translation'
 import CURRENCIES from '../../config/currencies.json'
-import Migrator from '../../util/migrator'
+import {Db} from '@/store'
+import {mapState} from 'vuex'
 
 export default {
   name: 'accounts-pane',
@@ -143,15 +142,22 @@ export default {
   data: function () {
     return {
       // Variables
-      unsaved: false,
       loading: false,
       errorName: false,
-      accounts: this.$root.accounts,
       createModalShown: false,
       newAccount: {
-        currency: this.$root.settings.defaultCurrency
+        currency: this.$store.state.settings.defaultCurrency
       },
       currencies: CURRENCIES
+    }
+  },
+  computed: {
+    unsaved(){
+      return this.$store.state.unsaved
+    },
+    ...mapState(['accounts']),
+    lastFile(){
+      return this.$store.state.settings.lastfile
     }
   },
   methods: {
@@ -166,10 +172,7 @@ export default {
         currency: this.newAccount.currency
       }
       try {
-        this.$root.db.addAccount(this.newAccount.name, this.newAccount.currency, this.newAccount.amount)
-        this.accounts.push(account)
-        this.$root.$emit('update-accounts')
-        this.$root.$emit('toggle-tab', 0)
+        Db.addAccount(account.name, account.currency, account.amount)
         this.showUnsavedTag()
         this.loading = false
         this.closeModal()
@@ -190,12 +193,7 @@ export default {
       }
       const ipcr = (ipcRenderer.sendSync('warning', options))
       if (ipcr === 0) {
-        const index = this.accounts.indexOf(this.accounts.find(a => a.name === account.name))
-        this.accounts.splice(index, 1)
-        this.$root.db.deleteAccount(account.name)
-        this.$root.$emit('update-accounts')
-        this.$root.$emit('toggle-tab', 0)
-        this.showUnsavedTag()
+        this.$store.dispatch('deleteAccount', account.name)
       }
     },
 
@@ -215,23 +213,8 @@ export default {
 
     closeModal: function () {
       this.newAccount = {}
-      this.newAccount.currency = this.$root.settings.defaultCurrency
+      this.newAccount.currency = this.$store.state.settings.defaultCurrency
       this.createModalShown = false
-    },
-
-    updateAccountsList: function () {
-      try {
-        this.$root.accounts = this.$root.db.exec('SELECT * FROM Accounts')
-      } catch (e) {
-        console.warn(e)
-        this.$root.accounts = []
-      }
-      this.accounts = this.$root.accounts
-      this.$root.$emit('update-accounts', this.$root.accounts)
-    },
-
-    softUpdate: function () {
-      this.accounts = this.$root.accounts
     },
     currencyTranslation (currency) {
       return configTranslation(currency)
@@ -239,28 +222,6 @@ export default {
   },
   created: function () {
     const vm = this
-    ipcRenderer.on('saved-file', (event, arg) => {
-      vm.$root.db.export(arg)
-      vm.$root.settings.lastfile = arg
-      jsonfile.writeFile(path.join(__static, 'settings.json'), vm.$root.settings, {
-        spaces: 2
-      }, function (err) {
-        if (err != null) {
-          console.error(err)
-        }
-      })
-      vm.hideUnsavedTag()
-    })
-
-    ipcRenderer.on('open-new-file', () => {
-      vm.$root.db = new Database()
-      // TODO only on app start
-      Migrator.migrate(vm.$root.db)
-      vm.updateAccountsList()
-      vm.$root.$emit('toggle-tab', 0)
-      vm.showUnsavedTag()
-      delete vm.$root.settings.lastfile
-    })
 
     let force = false
     remote.app.on('before-quit', function (evt) {
@@ -287,11 +248,6 @@ export default {
         return false
       }
     })
-
-    this.$root.$on('update-accounts-list:success', this.softUpdate) // TODO better reload !
-    this.$root.$on('launch-recurrings:success', this.showUnsavedTag)
-    this.$root.$on('recurrings:delete:success', this.showUnsavedTag)
-    this.$root.$on('show-unsaved-tag', this.showUnsavedTag)
   }
 }
 </script>

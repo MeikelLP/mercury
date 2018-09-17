@@ -1,36 +1,24 @@
 <template>
-  <div :class="$root.settings.theme" id="app">
-    <div class="columns is-mobile is-marginless">
-      <div class="column" style="-webkit-app-region: drag">
-        <span class="title">
-          <span class="icon">
-            <font-awesome-icon class="has-text-info" icon="sliders-h" />
-          </span>
-          <span>{{'SETTINGS.TITLE' | translate}}</span>
-        </span>
-      </div>
-      <div class="column is-narrow is-paddingless">
-        <a onclick="window.close()" class="button is-outlined is-danger is-pulled-right">
-          <font-awesome-icon icon="times" fixed-width/>
-        </a>
-      </div>
-    </div>
-    <ul class="tabs is-fullwidth">
-      <li v-for="tab in tabs" :key="tab.key" :class="{'is-active': activeTab === tab.component}">
-        <a @click="activeTab = tab.component">
+  <div>
+    <section class="section">
+      <h2 class="title is-2">
+        <span>{{'SETTINGS.TITLE' | translate}}</span>
+      </h2>
+      <ul class="tabs is-fullwidth">
+        <li v-for="tab in tabs" :key="tab.key" :class="{'is-active': activeTab === tab.component}">
+          <a @click="activeTab = tab.component">
           <span class="icon">
             <font-awesome-icon :icon="tab.icon"/>
           </span>
-          <span>{{ 'SETTINGS.TABS.TITLES.'+ tab.translate | translate}}</span>
-        </a>
-      </li>
-    </ul>
-    <section class="section">
+            <span>{{ 'SETTINGS.TABS.TITLES.'+ tab.translate | translate}}</span>
+          </a>
+        </li>
+      </ul>
       <div class="container is-fluid">
         <div>
           <div>
             <transition name="fadeUp" mode="out-in">
-              <component :is="activeTab"></component>
+              <component :is="activeTab" :settings="settings"></component>
             </transition>
           </div>
         </div>
@@ -38,9 +26,9 @@
     </section>
     <section class="section">
       <a class="button is-outlined is-info is-pulled-right"  :class="{'is-loading' : loading}" @click="save()">
-            <span class="icon">
-              <font-awesome-icon icon="save"/>
-            </span>&nbsp;
+        <span class="icon">
+          <font-awesome-icon icon="save"/>
+        </span>&nbsp;
         {{ "SETTINGS.SAVE" | translate}}
       </a>
     </section>
@@ -56,13 +44,13 @@ import {ipcRenderer} from 'electron'
 import jsonfile from 'jsonfile'
 import path from 'path'
 import Vue from 'vue'
+import { mapState } from 'vuex'
 
 export default {
-  data: function () {
+  data () {
     return {
       loading: false,
       activeTab: General,
-      settings: this.$root.settings,
       tabs: [
         {component: General, icon: 'cogs', translate: 'GENERAL'},
         {component: SavedValues, icon: 'bookmark', translate: 'SAVED_VALUES'},
@@ -113,6 +101,9 @@ export default {
         ipcRenderer.send('new-settings', this.settings)
       }
     }
+  },
+  computed: {
+    ...mapState(['settings'])
   }
 }
 </script>

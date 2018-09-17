@@ -1,32 +1,21 @@
 import Vue from 'vue'
 import Axios from 'axios'
 import Buefy from 'buefy'
+import moment from 'moment'
 
 import './assets/sass/all.sass'
-// nodeModules
-import jsonfile from 'jsonfile'
-import path from 'path'
-import moment from 'moment'
-import {ipcRenderer} from 'electron'
 
 import App from './App'
 import Router from './router'
-import { store, loadFromFile } from './store'
-
+import { store, openDatabase } from './store'
 import './icons'
 import './filters'
+import './electron-listener'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = Axios
 
 Vue.config.productionTip = false
-
-let globSettings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
-
-
-if (globSettings.lastfile) {
-  loadFromFile(globSettings.lastfile)
-}
 
 Vue.use(Buefy, {
   defaultIconPack: 'fa'
@@ -39,36 +28,23 @@ new Vue({
   components: { App },
   template: '<App/>',
   data: {
-    settings: globSettings,
-    unsaved: false,
-    db: null
+    unsaved: false
   },
-  methods: {
-    // Functions
-    updateSQL: function (sqlType) {
-      switch (sqlType) {
-        case 'dashboard':
-          ipcRenderer.send('tab-update', 0)
-          break
-        case 'accounts-detail':
-          ipcRenderer.send('tab-update', 1)
-          break
-        case 'recurrings':
-          ipcRenderer.send('tab-update', 2)
-          break
-        default:
-          ipcRenderer.send('tab-update', 0)
-      }
+  created(){
+    if (this.$store.state.settings.lastfile) {
+      openDatabase(this.$store.state.settings.lastfile)
     }
   },
-  mounted: function () {
+  mounted () {
+    // set theme
+    document.documentElement.className = this.$store.state.settings.theme
+
     // Sets locale
-    moment.locale(globSettings.language)
-    document.documentElement.className = this.settings.theme
+    moment.locale(this.$store.state.settings.language)
   },
   watch: {
-    'settings.theme'(){
-      document.documentElement.className = this.settings.theme
+    '$store.state.settings.theme'(){
+      document.documentElement.className = this.$store.state.settings.theme
     }
   }
 }).$mount('#app')

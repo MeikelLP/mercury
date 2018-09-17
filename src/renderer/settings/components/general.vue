@@ -125,15 +125,20 @@ import { currencyIcon } from '../../util/icons'
 import { configTranslation } from '../../util/translation'
 
 export default {
-  data: function () {
+  props: {
+    settings: {
+      required: true,
+      type: Object
+    }
+  },
+  data () {
     return {
-      settings: this.$root.settings,
       currencies: CURRENCIES,
       themes: THEMES
     }
   },
   computed: {
-    dateFormatTester: function () {
+    dateFormatTester () {
       return moment().format(this.settings.dateFormat)
     }
   },

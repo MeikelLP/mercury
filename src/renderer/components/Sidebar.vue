@@ -15,7 +15,7 @@
           </p>
           <ul class="menu-list">
             <li v-for="route in routes[group]" :key="route.path">
-              <router-link :to="route.path" :class="{'is-active': $route.path === route.path, 'is-disabled': route.meta.requiresAccount && !hasAccounts}" class="has-text-right">
+              <router-link :to="route.path" :class="{'is-active': $route.path === route.path, 'is-disabled': route.meta.requiresAccount && accounts.length <= 0}" class="has-text-right">
                 <span>{{ route.name | configTranslate }}</span>
                 <span class="menu-icon">
                   <font-awesome-icon :icon="route.meta.icon" fixed-width/>
@@ -46,6 +46,7 @@
 <script>
   import ROUTES from '../router/routes'
   import { groupBy } from '../../util/common'
+  import { mapState } from 'vuex'
 
   const relevantRoutes = ROUTES.filter(r => r.hasOwnProperty('meta') && r.meta.hasOwnProperty('requiresAccount'))
 
@@ -57,9 +58,9 @@
       }
     },
     computed: {
-      hasAccounts () {
-        return this.$store.getters.accounts.length > 0
-      }
+      ...mapState([
+        'accounts'
+      ])
     }
   }
 </script>

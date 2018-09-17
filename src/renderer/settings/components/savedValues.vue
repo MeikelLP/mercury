@@ -64,13 +64,14 @@
 
 <script>
 export default {
-  data: function () {
-    return {
-      settings: this.$root.settings
+  props: {
+    settings: {
+      required: true,
+      type: Object
     }
   },
   methods: {
-    deleteEntry: function (index, entry) {
+    deleteEntry (index, entry) {
       this.settings[entry].splice(index, 1)
     }
   }
