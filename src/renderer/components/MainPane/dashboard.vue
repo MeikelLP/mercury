@@ -27,6 +27,7 @@
 import moment from 'moment'
 import {ipcRenderer} from 'electron'
 import Vue from 'vue'
+import { mapState } from 'vuex'
 import chartJS from 'chart.js' // eslint-disable-line
 
 export default {
@@ -81,7 +82,8 @@ export default {
   computed: {
     lastMonth: function () {
       return moment().subtract(1, 'months').format('MMMM YYYY')
-    }
+    },
+    ...mapState(['settings'])
   },
   methods: {
     send: function (msg) {
@@ -146,7 +148,7 @@ export default {
       }
     }
 
-    if (this.$root.settings.theme === 'dark') {
+    if (this.settings.theme === 'dark') {
       config.options.legend.labels = {fontColor: 'rgb(237, 237, 237)'}
     }
 

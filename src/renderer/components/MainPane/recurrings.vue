@@ -1,10 +1,8 @@
 <template lang="html">
   <div>
-    <p class="title is-marginless">
-      <font-awesome-icon class="has-text-success" icon="recycle"/>
+    <h2 class="title is-2">
       {{'MAIN_PANE.RECURRINGS.TITLE' | translate}}
-    </p>
-    <hr />
+    </h2>
     <!-- <recurring-bar /> -->
     <nav class="level">
       <div class="level-item">
@@ -196,6 +194,8 @@ import CustomField from '@/components/common/customField'
 import { ipcRenderer, remote } from 'electron'
 import moment from 'moment'
 import Vue from 'vue'
+import { mapState } from 'vuex'
+import { Db } from '@/store'
 import { currencyIcon, stateIcon } from '../../util/icons'
 import { configTranslation } from '../../util/translation'
 import OPERATION_TYPES from '../../../config/operation-types'
@@ -205,33 +205,24 @@ export default {
     Modal,
     CustomField
   },
-  data: function () {
+  data () {
     return {
       recModalActive: false,
       recurrings: [],
-      accounts: this.$root.accounts,
       modalConfig: {callback: () => {}},
-      settings: this.$root.settings,
       launching: false,
-      launch: {
-        offset: this.$root.settings.defaultOffset,
-        timeSpan: this.$root.settings.defaultTimeSpan
-      },
-      newRecurringOperation: {
-        date: moment().format(this.$root.settings.dateFormat),
-        selectedAccount: this.$root.accounts[0],
-        type: OPERATION_TYPES[0],
-        offset: 1,
-        timespan: 'days'
-      },
+      launch: {},
+      newRecurringOperation: {},
       operationTypes: OPERATION_TYPES
     }
   },
-
+  computed: {
+    ...mapState(['accounts', 'settings'])
+  },
   methods: {
     getData: function () {
-      this.recurrings = this.$root.db.exec('SELECT id,date,type,beneficiary,category,label,amount, account_name FROM Recurrings ORDER BY date ASC')
-      this.recurrings.map(r => { r.isSelected = false; r.selectedAccount = this.$root.accounts.find(a => a.name === r.account_name) })
+      this.recurrings = Db.exec('SELECT id,date,type,beneficiary,category,label,amount, account_name FROM Recurrings ORDER BY date ASC')
+      this.recurrings.map(r => { r.isSelected = false; r.selectedAccount = this.accounts.find(a => a.name === r.account_name) })
     },
     currencyIcon (currency) {
       return currencyIcon(currency)
@@ -242,8 +233,8 @@ export default {
     contextMenu: function (recurring) {
       let vm = this
       let contextualMenu = new remote.Menu()
-      let contextualContent = this.$root.db.exec(`SELECT account_name,date,offset,timespan,times FROM Recurrings WHERE id=${recurring.id}`)[0]
-      const nextDate = moment(contextualContent.date, 'YYYY-MM-DD').add(contextualContent.offset, contextualContent.timespan).format(this.$root.settings.dateFormat)
+      let contextualContent = Db.exec(`SELECT account_name,date,offset,timespan,times FROM Recurrings WHERE id=${recurring.id}`)[0]
+      const nextDate = moment(contextualContent.date, 'YYYY-MM-DD').add(contextualContent.offset, contextualContent.timespan).format(this.settings.dateFormat)
       contextualMenu.append(new remote.MenuItem({label: Vue.filter('translate')('MAIN_PANE.RECURRINGS.CONTEXTUAL.ACCOUNT') + ' : ' + contextualContent.account_name, enabled: false}))
       contextualMenu.append(new remote.MenuItem({label: Vue.filter('translate')('MAIN_PANE.RECURRINGS.CONTEXTUAL.NEXT') + ' : ' + nextDate, enabled: false}))
       contextualMenu.append(new remote.MenuItem({
@@ -289,19 +280,19 @@ export default {
     launchPending: function (id = null, fromContext = false) {
       let operations = []
       if (id) {
-        this.$root.db.launchPending(id)
+        Db.launchPending(id)
       } else {
         this.launching = true
         let upperBound = moment().add(this.launch.offset, this.launch.timeSpan).format('YYYY-MM-DD')
         try {
-          operations = this.$root.db.exec(`SELECT id FROM Recurrings WHERE date <="${upperBound}"`)
+          operations = Db.exec(`SELECT id FROM Recurrings WHERE date <="${upperBound}"`)
         } catch (e) {
           console.warn(e)
           operations.length = 0
         } finally {
           // IDEA: Progress bar of how many operations are running
           for (var i = 0; i < operations.length; i++) {
-            this.$root.db.launchPending(operations[i].id)
+            Db.launchPending(operations[i].id)
           }
           const options = {
             title: Vue.filter('translate')('MAIN_PANE.RECURRINGS.POPUP.TITLE'),
@@ -330,7 +321,7 @@ export default {
       let confirm = ipcRenderer.sendSync('warning', options)
       if (confirm === 0) {
         id = Number(id)
-        this.$root.db.deleteRec(id)
+        Db.deleteRec(id)
         if (!fromContext) {
           this.closeRecModal()
         }
@@ -349,7 +340,7 @@ export default {
             translate: 'CREATE',
             callback: function () {
               console.log(vm.newRecurringOperation)
-              vm.$root.db.insertRecurringOperation(
+              Db.insertRecurringOperation(
                 vm.newRecurringOperation.selectedAccount.name,
                 [
                   vm.newRecurringOperation.amount,
@@ -362,14 +353,14 @@ export default {
                   vm.newRecurringOperation.timespan,
                   vm.newRecurringOperation.times
                 ],
-                vm.$root.settings.dateFormat
+                vm.settings.dateFormat
               )
               vm.$root.$emit('show-unsaved-tag')
               vm.closeRecModal()
               vm.getData()
               vm.newRecurringOperation = {
-                date: moment().format(this.$root.settings.dateFormat),
-                selectedAccount: this.$root.accounts[0],
+                date: moment().format(vm.settings.dateFormat),
+                selectedAccount: vm.accounts[0],
                 type: OPERATION_TYPES[0],
                 offset: 1,
                 timespan: 'days'
@@ -386,12 +377,12 @@ export default {
             }
             ipcRenderer.send('notification', options)
           }
-          let resSQL = this.$root.db.exec(`SELECT offset, timespan, times FROM Recurrings WHERE id=${this.newRecurringOperation.id}`)[0]
+          let resSQL = Db.exec(`SELECT offset, timespan, times FROM Recurrings WHERE id=${this.newRecurringOperation.id}`)[0]
           if (resSQL.times !== null && resSQL.times > 0) {
             this.newRecurringOperation.hasRepeat = true
             this.newRecurringOperation.times = resSQL.times
           }
-          this.newRecurringOperation.date = moment(this.newRecurringOperation.date).format(this.$root.settings.dateFormat)
+          this.newRecurringOperation.date = moment(this.newRecurringOperation.date).format(this.settings.dateFormat)
           this.newRecurringOperation.offset = resSQL.offset
           this.newRecurringOperation.timespan = resSQL.timespan
           this.modalConfig = {
@@ -399,7 +390,7 @@ export default {
             icon: 'pencil',
             translate: 'EDIT',
             callback: function () {
-              vm.$root.db.editRecurringOperation(
+              Db.editRecurringOperation(
                 vm.newRecurringOperation.id,
                 vm.newRecurringOperation.selectedAccount.name,
                 [
@@ -413,14 +404,14 @@ export default {
                   vm.newRecurringOperation.timespan,
                   vm.newRecurringOperation.times
                 ],
-                vm.$root.settings.dateFormat
+                vm.settings.dateFormat
               )
               vm.$root.$emit('show-unsaved-tag')
               vm.closeRecModal()
               vm.getData()
               vm.newRecurringOperation = {
-                date: moment().format(this.$root.settings.dateFormat),
-                selectedAccount: this.$root.accounts[0],
+                date: moment().format(vm.settings.dateFormat),
+                selectedAccount: vm.accounts[0],
                 type: OPERATION_TYPES[0],
                 offset: 1,
                 timespan: 'days'
@@ -452,8 +443,8 @@ export default {
       if (recurring.isSelected) {
         recurring.isSelected = false
         this.newRecurringOperation = {
-          date: moment().format(this.$root.settings.dateFormat),
-          selectedAccount: this.$root.accounts[0],
+          date: moment().format(this.settings.dateFormat),
+          selectedAccount: this.accounts[0],
           type: OPERATION_TYPES[0],
           offset: 1,
           timespan: 'days'
@@ -472,6 +463,17 @@ export default {
   },
   created: function () {
     this.getData()
+    this.launch = {
+      offset: this.settings.defaultOffset,
+      timeSpan: this.settings.defaultTimeSpan
+    }
+    this.newRecurringOperation = {
+      date: moment().format(this.settings.dateFormat),
+      selectedAccount: this.accounts[0],
+      type: OPERATION_TYPES[0],
+      offset: 1,
+      timespan: 'days'
+    }
   }
 }
 </script>

@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <div class="control field has-addons">
     <p class="control">
       <a class="button is-primary" :class="{'is-outlined' : !test}" @click="callback">

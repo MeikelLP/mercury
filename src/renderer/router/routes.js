@@ -45,17 +45,6 @@ export default [
     }
   },
   {
-    path: '/dashboard',
-    name: '$MAIN_PANE.TABS.DASHBOARD',
-    component: Dashboard,
-    meta: {
-      requiresAccount: true,
-      group: '$GENERAL',
-      icon: 'tachometer-alt',
-      position: 2
-    }
-  },
-  {
     path: '/accountDetails',
     name: '$MAIN_PANE.TABS.ACCOUNTS',
     component: AccountDetails,
@@ -114,5 +103,9 @@ export default [
     path: '/settings',
     name: 'Settings',
     component: Settings
+  },
+  {
+    path: '*',
+    redirect: { path: '/' }
   }
 ]

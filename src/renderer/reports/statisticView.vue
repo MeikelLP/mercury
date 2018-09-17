@@ -49,22 +49,23 @@
 <script>
 import report from '@/reports/components/report'
 
+import ToggleButton from './components/toggleButton'
+
 import { ipcRenderer } from 'electron'
-import Database from '@/assets/Database.class'
 import chartJS from 'chart.js' // eslint-disable-line
 import moment from 'moment'
 import Vue from 'vue'
-import Migrator from '../../util/migrator'
+import { mapState } from 'vuex'
+import { Db } from '@/store'
 
 export default {
   components: {
-    report
+    report,
+    ToggleButton
   },
-  data: function () {
+  data () {
     return {
-      db: null,
       myChart: null,
-      accounts: [],
       period: 'thismonth',
       options: {
         nbCat: 6,
@@ -126,6 +127,9 @@ export default {
         }
       }
     }
+  },
+  computed: {
+    ...mapState(['accounts', 'settings'])
   },
   methods: {
     toggleType: function () {
@@ -230,9 +234,9 @@ export default {
       const highDate = moment(this.options.lastDate, 'YYYY-MM-DD').subtract(this.options.periodOffset, this.options.period).format('YYYY-MM-DD')
       try {
         if (this.options.allDates) {
-          dataDb = this.db.exec(`SELECT * FROM (SELECT category, SUM(amount) as s FROM OPERATION WHERE amount<=0 GROUP BY category ORDER BY s LIMIT ${this.options.nbCat}) ORDER BY ${this.options.order} ASC`)
+          dataDb = Db.exec(`SELECT * FROM (SELECT category, SUM(amount) as s FROM OPERATION WHERE amount<=0 GROUP BY category ORDER BY s LIMIT ${this.options.nbCat}) ORDER BY ${this.options.order} ASC`)
         } else {
-          dataDb = this.db.exec(`SELECT * FROM (SELECT category, SUM(amount) as s FROM OPERATION WHERE amount<=0 AND date BETWEEN "${lowDate}" AND "${highDate}" GROUP BY category ORDER BY s LIMIT ${this.options.nbCat}) ORDER BY ${this.options.order} ASC`)
+          dataDb = Db.exec(`SELECT * FROM (SELECT category, SUM(amount) as s FROM OPERATION WHERE amount<=0 AND date BETWEEN "${lowDate}" AND "${highDate}" GROUP BY category ORDER BY s LIMIT ${this.options.nbCat}) ORDER BY ${this.options.order} ASC`)
         }
       } catch (e) {
         console.warn(e)
@@ -300,24 +304,11 @@ export default {
       }
     }
   },
-  mounted: function () {
+  mounted () {
     const ctx = document.getElementById('myChart')
 
-    if (!this.$root.settings.lastfile) {
-      this.db = new Database()
-    } else {
-      try {
-        this.db = new Database(this.$root.settings.lastfile)
-      } catch (e) {
-        console.warn(e.message)
-        this.db = new Database()
-      }
-    }
-    // TODO only on app start
-    Migrator.migrate(this.db)
-
     this.updateConfig()
-    if (this.$root.settings.theme === 'dark') {
+    if (this.settings.theme === 'dark') {
       this.config.options.legend.labels = {fontColor: 'rgb(237, 237, 237)'}
     }
     this.myChart = new Chart(ctx, this.config) // eslint-disable-line

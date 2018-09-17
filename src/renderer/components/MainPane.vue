@@ -1,24 +1,12 @@
 <template>
   <div class="column">
-    <div class="tabs is-fullwidth">
-      <ul>
-        <li class="tab" v-for="tab in tabs" :class="{'is-active': activeTab === tab.component}" :key="tab.name">
-          <a @click="activeTab = tab.component">
-                <span class="icon">
-                  <font-awesome-icon size="sm" :icon="tab.icon" />
-                </span>
-            {{ configTranslation(tab.name) }}
-          </a>
-        </li>
-      </ul>
-    </div>
     <div>
-      <div class="has-text-centered" v-show="!$root.accounts.length">
+      <div class="has-text-centered" v-show="!accounts.length">
         <p class="title">{{ 'MAIN_PANE.NO_DATA.TITLE' | translate}}</p>
         <p class="subtitle" v-html="doTranslate('MAIN_PANE.NO_DATA.SUBTITLE')"></p>
       </div>
 
-      <component :is="activeTab" v-if="activeTab" v-show="$root.accounts.length"></component>
+      <component :is="activeTab" v-if="activeTab" v-show="accounts.length"></component>
     </div>
     <section class="section" id="chart-area">
       <canvas id="chronoChart"></canvas>
@@ -39,6 +27,8 @@ import ChronoChart from '@/assets/ChronoChart.class'
 import chartJS from 'chart.js' // eslint-disable-line
 import { translate } from '../filters'
 import { configTranslation } from '@/util/translation'
+import { mapState } from 'vuex'
+import { Db } from '@/store'
 
 export default {
   name: 'main-pane',
@@ -65,6 +55,9 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapState(['settings', 'accounts'])
   },
   methods: {
     doTranslate (value, option) {
@@ -97,19 +90,19 @@ export default {
 
     refreshChronochart: function () {
       try {
-        this.chronoChart.refresh(this.$root.accounts)
+        this.chronoChart.refresh(this.accounts)
       } catch (e) {
         console.error(e)
       }
     },
 
     reloadChronochart: function () {
-      this.chronoChart = new ChronoChart(document.getElementById('chronoChart'), this.$root.accounts, this.$root.db)
+      this.chronoChart = new ChronoChart(document.getElementById('chronoChart'), this.accounts, Db)
     }
   },
   created: function () {
     const self = this
-    moment.locale(this.$root.settings.language)
+    moment.locale(this.settings.language)
 
     this.$root.$on('toggle-tab', this.switchTab)
     this.$root.$on('add-operation', this.refreshChronochart)
@@ -149,7 +142,7 @@ export default {
     this.$root.$on('launch-recurrings:success', this.refreshChronochart)
   },
   mounted: function () {
-    this.chronoChart = new ChronoChart(document.getElementById('chronoChart'), this.$root.accounts, this.$root.db)
+    this.chronoChart = new ChronoChart(document.getElementById('chronoChart'), this.accounts, Db)
   }
 }
 </script>

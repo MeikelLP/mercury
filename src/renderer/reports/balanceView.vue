@@ -4,7 +4,7 @@
     <div class="field has-addons">
       <div class="control">
         <a class="button is-primary is-tag">
-          <font-awesome-icon fa="calendar"/>
+          <font-awesome-icon icon="calendar"/>
         </a>
       </div>
       <div class="control select is-primary">
@@ -20,7 +20,7 @@
       <div class="control field has-addons column">
         <div class="control">
           <a class="button is-primary is-tag">
-            <font-awesome-icon fa="calendar-plus"/>
+            <font-awesome-icon icon="calendar-plus"/>
           </a>
         </div>
         <div class="control" style="width: 10vw">
@@ -36,7 +36,7 @@
       <div class="control field has-addons column">
         <div class="control">
           <a class="button is-primary is-tag">
-            <font-awesome-icon fa="calendar-minus"/>
+            <font-awesome-icon icon="calendar-minus"/>
           </a>
         </div>
         <div class="control" style="width: 10vw">
@@ -58,11 +58,11 @@
   import report from '@/reports/components/report'
 
   import { ipcRenderer } from 'electron'
-  import Database from '@/assets/Database.class'
   import chartJS from 'chart.js' // eslint-disable-line
   import moment from 'moment'
   import Vue from 'vue'
-  import Migrator from '../../util/migrator'
+  import { mapState } from 'vuex'
+  import { Db } from '@/store'
 
   // Use datepart SQL to filter by week / month / day / quarter /
   // https://docs.microsoft.com/en-us/sql/t-sql/functions/datepart-transact-sql?view=sql-server-2017
@@ -77,13 +77,11 @@
 
   export default {
     components: {report},
-    data: function () {
+    data () {
       return {
-        db: null,
         myChart: null,
         firstCustomDate: null,
         lastCustomDate: null,
-        accounts: [],
         options: {
           period: 'thismonth',
           firstDate: moment().startOf('month').format('YYYY-MM-DD'),
@@ -117,67 +115,25 @@
             {value: 'lastyear', label: 'TIME.LY'},
             {value: '', label: 'TIME.*'}
           ],
-          config: {
-            type: 'line',
-            data: {datasets: []},
-            options: {
-              legend: {
-                position: 'bottom'
-              },
-              fill: 'bottom',
-              scales: {
-                xAxes: [{
-                  type: 'time',
-                  time: {
-                    parser: this.$root.settings.dateFormat,
-                    tooltipFormat: this.$root.settings.dateFormat
-                  },
-                  scaleLabel: {
-                    display: true,
-                    labelString: Vue.filter('translate')('CHART.DATE')
-                  }
-                }],
-                yAxes: [{
-                  scaleLabel: {
-                    display: true,
-                    labelString: Vue.filter('translate')('CHART.VALUE')
-                  }
-                }]
-              }
-            }
-          }
+          config: {}
         }
       }
     },
+    computed: {
+      ...mapState(['accounts', 'settings'])
+    },
     methods: {
-      getAccounts: function (vm) {
-        return new Promise(function (resolve, reject) {
-          vm.accounts = []
-          let dbAccounts = null
-          try {
-            dbAccounts = vm.db.exec('SELECT * FROM Accounts')
-          } catch (e) {
-            dbAccounts = []
-          } finally {
-            for (let i = 0; i < dbAccounts.length; i++) {
-              vm.accounts.push(dbAccounts[i])
-            }
-            resolve(vm)
-          }
-        })
-      },
-
       updateConfig: function () {
-        this.firstCustomDate = moment(this.options.firstDate, 'YYYY-MM-DD').format(this.$root.settings.dateFormat)
-        this.lastCustomDate = moment(this.options.lastDate, 'YYYY-MM-DD').format(this.$root.settings.dateFormat)
+        this.firstCustomDate = moment(this.options.firstDate, 'YYYY-MM-DD').format(this.settings.dateFormat)
+        this.lastCustomDate = moment(this.options.lastDate, 'YYYY-MM-DD').format(this.settings.dateFormat)
         let tmpColors
         for (let i = 0; i < this.accounts.length; i++) {
           let data = null
           try {
             if (this.options.allDates) {
-              data = this.db.exec(`SELECT date, SUM(amount) as amount FROM OPERATION WHERE account_name="${this.accounts[i].name}" GROUP BY date`)
+              data = Db.exec(`SELECT date, SUM(amount) as amount FROM OPERATION WHERE account_name="${this.accounts[i].name}" GROUP BY date`)
             } else {
-              data = this.db.exec(`SELECT date, SUM(amount) as amount FROM OPERATION WHERE account_name="${this.accounts[i].name}" AND date BETWEEN "${this.options.firstDate}" AND "${this.options.lastDate}" GROUP BY date`)
+              data = Db.exec(`SELECT date, SUM(amount) as amount FROM OPERATION WHERE account_name="${this.accounts[i].name}" AND date BETWEEN "${this.options.firstDate}" AND "${this.options.lastDate}" GROUP BY date`)
             }
           } catch (e) {
             data = [{date: moment().format('YYYY-MM-DD'), amount: 0}]
@@ -196,7 +152,7 @@
             }
             for (let j = 0; j < data.length; j++) {
               this.config.data.datasets[i].data.push({
-                x: moment(data[j].date, 'YYYY-MM-DD').format(this.$root.settings.dateFormat),
+                x: moment(data[j].date, 'YYYY-MM-DD').format(this.settings.dateFormat),
                 y: data[j].amount.toFixed(2)
               })
             }
@@ -242,19 +198,19 @@
       },
 
       throwCustom: function () {
-        this.options.firstDate = moment(this.firstCustomDate, this.$root.settings.dateFormat).format('YYYY-MM-DD')
-        this.options.lastDate = moment(this.lastCustomDate, this.$root.settings.dateFormat).format('YYYY-MM-DD')
+        this.options.firstDate = moment(this.firstCustomDate, this.settings.dateFormat).format('YYYY-MM-DD')
+        this.options.lastDate = moment(this.lastCustomDate, this.settings.dateFormat).format('YYYY-MM-DD')
         this.updateConfig()
         this.myChart.update()
       },
 
       addOneDay: function (date) {
-        this[date] = moment(this[date], this.$root.settings.dateFormat).add(1, 'days').format(this.$root.settings.dateFormat)
+        this[date] = moment(this[date], this.settings.dateFormat).add(1, 'days').format(this.settings.dateFormat)
         this.throwCustom()
       },
 
       subtractOneDay: function (date) {
-        this[date] = moment(this[date], this.$root.settings.dateFormat).subtract(1, 'days').format(this.$root.settings.dateFormat)
+        this[date] = moment(this[date], this.settings.dateFormat).subtract(1, 'days').format(this.settings.dateFormat)
         this.throwCustom()
       },
 
@@ -264,25 +220,40 @@
         return tmp
       }
     },
-    mounted: function () {
+    mounted () {
       const ctx = document.getElementById('myChart')
 
-      if (!this.$root.settings.lastfile) {
-        this.db = new Database()
-      } else {
-        try {
-          this.db = new Database(this.$root.settings.lastfile)
-        } catch (e) {
-          console.warn(e.message)
-          this.db = new Database()
+      this.config = {
+        type: 'line',
+        data: {datasets: []},
+        options: {
+          legend: {
+            position: 'bottom'
+          },
+          fill: 'bottom',
+          scales: {
+            xAxes: [{
+              type: 'time',
+              time: {
+                parser: this.settings.dateFormat,
+                tooltipFormat: this.settings.dateFormat
+              },
+              scaleLabel: {
+                display: true,
+                labelString: Vue.filter('translate')('CHART.DATE')
+              }
+            }],
+            yAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: Vue.filter('translate')('CHART.VALUE')
+              }
+            }]
+          }
         }
       }
-      // TODO only on app start
-      Migrator.migrate(this.db)
-      this.getAccounts(this).then(function (vm) {
-      })
       this.updateConfig()
-      if (this.$root.settings.theme === 'dark') {
+      if (this.settings.theme === 'dark') {
         this.config.options.legend.labels = {fontColor: 'rgb(237, 237, 237)'}
       }
       this.myChart = new Chart(ctx, this.config) // eslint-disable-line

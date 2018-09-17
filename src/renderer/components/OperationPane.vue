@@ -154,7 +154,7 @@
   </section>
 </template>
 <script>
-  import CustomField from './common/customField'
+import CustomField from './common/customField'
 
 import {ipcRenderer} from 'electron'
 import jsonfile from 'jsonfile'
@@ -167,10 +167,13 @@ import { parseLocalizedString } from '../filters'
 import OPERATION_STATES from '../../config/operation-states'
 import OPERATION_TYPES from '../../config/operation-types'
 
+import { mapState } from 'vuex'
+import { Db } from '@/store'
+
 export default {
   name: 'operation-pane',
   components: { CustomField },
-  data: function () {
+  data () {
     return {
       beneficiaryInput: false,
       categoryInput: false,
@@ -178,14 +181,7 @@ export default {
       isEditing: false,
       states: OPERATION_STATES,
       helper: '-',
-      settings: this.$root.settings,
-      accounts: this.$root.accounts,
-      newOperation: {
-        date: moment().format(this.$root.settings.dateFormat),
-        selectedAccount: this.$root.accounts[0] || {currency: this.$root.settings.defaultCurrency},
-        type: OPERATION_TYPES[0],
-        state: OPERATION_STATES[0]
-      },
+      newOperation: {},
       errors: [false, false, false],
       operationTypes: OPERATION_TYPES.sort((a, b) => configTranslation(a).localeCompare(configTranslation(b)))
     }
@@ -195,14 +191,14 @@ export default {
       if (this.newOperation.selectedAccount) {
         return currencyIcon(this.newOperation.selectedAccount.currency)
       }
-      return this.$root.settings.defaultCurrency
+      return this.settings.defaultCurrency
     },
     stateIcon () {
       return stateIcon(this.newOperation.state)
     },
     bfiltered: function () {
       if (this.beneficiaryInput && this.newOperation.beneficiary && this.newOperation.beneficiary.length >= 1) {
-        return this.$root.settings.beneficiaries.filter(item => {
+        return this.settings.beneficiaries.filter(item => {
           if (item !== null && item !== undefined && item.toString().indexOf(this.newOperation.beneficiary) !== -1) {
             return item.toLowerCase()
           }
@@ -211,7 +207,7 @@ export default {
     },
     cfiltered: function () {
       if (this.categoryInput && this.newOperation.category && this.newOperation.category.length >= 1) {
-        return this.$root.settings.categories.filter(item => {
+        return this.settings.categories.filter(item => {
           if (item !== null && item !== undefined && item.toString().indexOf(this.newOperation.category) !== -1) {
             return item.toLowerCase()
           }
@@ -221,13 +217,14 @@ export default {
 
     lfiltered: function () {
       if (this.labelInput && this.newOperation.label && this.newOperation.label.length >= 1) {
-        return this.$root.settings.labels.filter(item => {
+        return this.settings.labels.filter(item => {
           if (item !== null && item !== undefined && item.toString().indexOf(this.newOperation.label) !== -1) {
             return item.toLowerCase()
           }
         }).slice(0, 5)
       }
-    }
+    },
+    ...mapState(['accounts', 'settings'])
   },
   methods: {
     toggleState: function (state) {
@@ -235,11 +232,11 @@ export default {
     },
 
     addOneDay: function () {
-      this.newOperation.date = moment(this.newOperation.date, this.$root.settings.dateFormat).add(1, 'days').format(this.$root.settings.dateFormat)
+      this.newOperation.date = moment(this.newOperation.date, this.settings.dateFormat).add(1, 'days').format(this.settings.dateFormat)
     },
 
     subtractOneDay: function () {
-      this.newOperation.date = moment(this.newOperation.date, this.$root.settings.dateFormat).subtract(1, 'days').format(this.$root.settings.dateFormat)
+      this.newOperation.date = moment(this.newOperation.date, this.settings.dateFormat).subtract(1, 'days').format(this.settings.dateFormat)
     },
 
     isValid: function () {
@@ -290,7 +287,7 @@ export default {
             console.error(err)
           }
         })
-        this.$root.db.insertOperation(this.newOperation.selectedAccount.name, data, this.$root.settings.dateFormat)
+        Db.insertOperation(this.newOperation.selectedAccount.name, data, this.settings.dateFormat)
         this.cleanOperation()
         this.$root.$emit('add-operation')
         this.$root.$emit('show-unsaved-tag')
@@ -300,7 +297,7 @@ export default {
     inheritOperation: function () {
       let oldOperation = Vue.util.extend({}, this.newOperation)
       this.newOperation = {
-        date: moment().format(this.$root.settings.dateFormat),
+        date: moment().format(this.settings.dateFormat),
         state: OPERATION_STATES[0],
         beneficiary: oldOperation.beneficiary,
         category: oldOperation.category,
@@ -324,7 +321,7 @@ export default {
       }
       confirm = ipcRenderer.sendSync('warning', options)
       if (confirm === 0) {
-        this.$root.db.deleteOperation(this.newOperation.id)
+        Db.deleteOperation(this.newOperation.id)
         this.endOperation('confirm')
         this.$root.$emit('show-unsaved-tag')
       }
@@ -338,7 +335,7 @@ export default {
     cleanOperation: function () {
       this.isEditing = false
       this.newOperation = {
-        date: moment().format(this.$root.settings.dateFormat),
+        date: moment().format(this.settings.dateFormat),
         selectedAccount: this.accounts[0],
         type: OPERATION_TYPES[0],
         state: OPERATION_STATES[0]
@@ -387,7 +384,7 @@ export default {
               console.error(err)
             }
           })
-          this.$root.db.editOperation(this.newOperation.id, data, this.$root.settings.dateFormat)
+          Db.editOperation(this.newOperation.id, data, this.settings.dateFormat)
           this.endOperation('confirm')
         } else {
           console.warn('NO ID ON EDITION !')
@@ -400,38 +397,17 @@ export default {
     }
   },
   created: function () {
-    this.$root.$on('update-accounts', function () { this.newOperation.selectedAccount = this.$root.accounts[0] })
+    this.$root.$on('update-accounts', function () { this.newOperation.selectedAccount = this.accounts[0] })
     this.$root.$on('edit-operation', this.editOperation)
     this.$root.$on('edit-operation:clean', this.cleanOperation)
 
     this.$root.$on('update-accounts-list:success', this.$forceUpdate)
-    // Typeahead
-    // const typeahead = require('typeahead') // eslint-disable-line
-    // const beneficiaryInput = document.getElementById('op-benef')
-    // beneficiaryInput.typeahead({
-    //   hint: true,
-    //   highlight: true,
-    //   minLenght: 1
-    // }, {
-    //   name: 'beneficiaries',
-    //   source: substringMatcher(this.settings.beneficiaries)
-    // })
+    this.newOperation = {
+      date: moment().format(this.settings.dateFormat),
+      selectedAccount: this.accounts[0] || {currency: this.settings.defaultCurrency},
+      type: OPERATION_TYPES[0],
+      state: OPERATION_STATES[0]
+    }
   }
 }
 </script>
-
-
-<style>
-  .Results {
-    margin-top: 0.25rem !important;
-    margin-left: .6rem !important;
-  }
-  .collapse-enter-active, .collapse-leave-active {
-    transition: all 500ms;
-    height: 1em;
-  }
-
-  .collapse-enter, .collapse-leave-to /* .list-leave-active below version 2.1.8 */ {
-    height: 0;
-  }
-</style>

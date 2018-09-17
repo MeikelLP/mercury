@@ -37,6 +37,7 @@ import CustomField from '../../common/customField'
 import {ipcRenderer} from 'electron'
 import moment from 'moment'
 import Vue from 'vue'
+import { mapState } from 'vuex'
 
 import {configTranslation} from '../../../util/translation'
 
@@ -46,9 +47,8 @@ export default {
   components: {
     CustomField
   },
-  data: function () {
+  data () {
     return {
-      accounts: this.$root.accounts,
       timesSpan: [
         {value: moment().subtract(30, 'days').format('YYYY-MM-DD'), label: 'TIME.L30'},
         {value: moment().startOf('month').format('YYYY-MM-DD'), label: 'TIME.TM'},
@@ -67,12 +67,7 @@ export default {
         {value: 'minus', label: 'MAIN_PANE.ACCOUNTS.DEBIT'}
       ],
       // Default filters
-      filters: {
-        account: this.$root.accounts[0],
-        date: moment().subtract(30, 'days').format('YYYY-MM-DD'),
-        state: '*',
-        amount: '*'
-      }
+      filters: {}
     }
   },
   methods: {
@@ -97,7 +92,17 @@ export default {
     }
   },
   created: function () {
-    this.$root.$on('update-accounts', function () { this.filters.account = this.$root.accounts[0] })
+    const self = this
+    this.$root.$on('update-accounts', function () { self.filters.account = self.accounts[0] })
+    this.filters = {
+      account: this.accounts[0],
+      date: moment().subtract(30, 'days').format('YYYY-MM-DD'),
+      state: '*',
+      amount: '*'
+    }
+  },
+  computed: {
+    ...mapState(['accounts'])
   }
 }
 </script>

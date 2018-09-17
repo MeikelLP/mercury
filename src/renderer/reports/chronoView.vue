@@ -52,11 +52,11 @@
 import report from '@/reports/components/report'
 
 import { ipcRenderer } from 'electron'
-import Database from '@/assets/Database.class'
 import chartJS from 'chart.js' // eslint-disable-line
 import moment from 'moment'
 import Vue from 'vue'
-import Migrator from '../../util/migrator'
+import { mapState } from 'vuex'
+import { Db } from '@/store'
 
 // Use datepart SQL to filter by week / month / day / quarter /
 // https://docs.microsoft.com/en-us/sql/t-sql/functions/datepart-transact-sql?view=sql-server-2017
@@ -71,13 +71,11 @@ const colors = [ // eslint-disable-line
 
 export default {
   components: { report },
-  data: function () {
+  data () {
     return {
-      db: null,
       myChart: null,
       firstCustomDate: null,
       lastCustomDate: null,
-      accounts: [],
       options: {
         floor: false,
         period: 'thismonth',
@@ -94,58 +92,13 @@ export default {
         {value: 'lastyear', label: 'TIME.LY'},
         {value: '', label: 'TIME.*'}
       ],
-      config: {
-        type: 'line',
-        data: {datasets: []},
-        options: {
-          legend: {
-            position: 'bottom'
-          },
-          fill: 'bottom',
-          scales: {
-            xAxes: [{
-              type: 'time',
-              time: {
-                parser: this.$root.settings.dateFormat,
-                tooltipFormat: this.$root.settings.dateFormat
-              },
-              scaleLabel: {
-                display: true,
-                labelString: Vue.filter('translate')('CHART.DATE')
-              }
-            }],
-            yAxes: [{
-              scaleLabel: {
-                display: true,
-                labelString: Vue.filter('translate')('CHART.VALUE')
-              }
-            }]
-          }
-        }
-      }
+      config: {}
     }
   },
   methods: {
-    getAccounts: function (vm) {
-      return new Promise(function (resolve, reject) {
-        vm.accounts = []
-        let dbAccounts = null
-        try {
-          dbAccounts = vm.db.exec('SELECT * FROM Accounts')
-        } catch (e) {
-          dbAccounts = []
-        } finally {
-          for (let i = 0; i < dbAccounts.length; i++) {
-            vm.accounts.push(dbAccounts[i])
-          }
-          resolve(vm)
-        }
-      })
-    },
-
     updateConfig: function () {
-      this.firstCustomDate = moment(this.options.firstDate, 'YYYY-MM-DD').format(this.$root.settings.dateFormat)
-      this.lastCustomDate = moment(this.options.lastDate, 'YYYY-MM-DD').format(this.$root.settings.dateFormat)
+      this.firstCustomDate = moment(this.options.firstDate, 'YYYY-MM-DD').format(this.settings.dateFormat)
+      this.lastCustomDate = moment(this.options.lastDate, 'YYYY-MM-DD').format(this.settings.dateFormat)
       let tmpColors
       let chartFirstDate
       let lastDate
@@ -153,9 +106,9 @@ export default {
         let data = null
         try {
           if (this.options.allDates) {
-            data = this.db.exec(`SELECT date as 'date', amount FROM ChronoBase WHERE account="${this.accounts[i].name}" GROUP BY date`)
+            data = Db.exec(`SELECT date as 'date', amount FROM ChronoBase WHERE account="${this.accounts[i].name}" GROUP BY date`)
           } else {
-            data = this.db.exec(`SELECT date as 'date', amount FROM ChronoBase WHERE account="${this.accounts[i].name}" AND date BETWEEN "${this.options.firstDate}" AND "${this.options.lastDate}" GROUP BY date`)
+            data = Db.exec(`SELECT date as 'date', amount FROM ChronoBase WHERE account="${this.accounts[i].name}" AND date BETWEEN "${this.options.firstDate}" AND "${this.options.lastDate}" GROUP BY date`)
           }
         } catch (e) {
           data = [{date: moment().format('YYYY-MM-DD'), amount: 0}]
@@ -176,7 +129,7 @@ export default {
           let negative = false
           for (let j = 0; j < data.length; j++) {
             this.config.data.datasets[i].data.push({
-              x: moment(data[j].date, 'YYYY-MM-DD').format(this.$root.settings.dateFormat),
+              x: moment(data[j].date, 'YYYY-MM-DD').format(this.settings.dateFormat),
               y: data[j].amount.toFixed(2)
             })
             if (data[j].amount < 0) {
@@ -202,8 +155,8 @@ export default {
 
       for (i = 0; i < this.config.data.datasets.length; i++) {
         for (var j = 0; j < this.config.data.datasets[i].data.length; j++) {
-          chartFirstDate = (moment(this.config.data.datasets[i].data[j].x, this.$root.settings.dateFormat).isBefore(moment(chartFirstDate, 'YYYY-MM-DD'))) ? moment(this.config.data.datasets[i].data[j].x, this.$root.settings.dateFormat).format('YYYY-MM-DD') : chartFirstDate
-          lastDate = (moment(this.config.data.datasets[i].data[j].x, this.$root.settings.dateFormat).isAfter(moment(lastDate, 'YYYY-MM-DD'))) ? moment(this.config.data.datasets[i].data[j].x, this.$root.settings.dateFormat).format('YYYY-MM-DD') : lastDate
+          chartFirstDate = (moment(this.config.data.datasets[i].data[j].x, this.settings.dateFormat).isBefore(moment(chartFirstDate, 'YYYY-MM-DD'))) ? moment(this.config.data.datasets[i].data[j].x, this.settings.dateFormat).format('YYYY-MM-DD') : chartFirstDate
+          lastDate = (moment(this.config.data.datasets[i].data[j].x, this.settings.dateFormat).isAfter(moment(lastDate, 'YYYY-MM-DD'))) ? moment(this.config.data.datasets[i].data[j].x, this.settings.dateFormat).format('YYYY-MM-DD') : lastDate
         }
       }
 
@@ -217,8 +170,8 @@ export default {
           pointRadius: 0,
           fill: 'bottom',
           data: [
-            {x: moment(chartFirstDate, 'YYYY-MM-DD').format(this.$root.settings.dateFormat), y: 0},
-            {x: moment(lastDate, 'YYYY-MM-DD').format(this.$root.settings.dateFormat), y: 0}
+            {x: moment(chartFirstDate, 'YYYY-MM-DD').format(this.settings.dateFormat), y: 0},
+            {x: moment(lastDate, 'YYYY-MM-DD').format(this.settings.dateFormat), y: 0}
           ]
         })
       } else {
@@ -266,8 +219,8 @@ export default {
     },
 
     throwCustom: function () {
-      this.options.firstDate = moment(this.firstCustomDate, this.$root.settings.dateFormat).format('YYYY-MM-DD')
-      this.options.lastDate = moment(this.lastCustomDate, this.$root.settings.dateFormat).format('YYYY-MM-DD')
+      this.options.firstDate = moment(this.firstCustomDate, this.settings.dateFormat).format('YYYY-MM-DD')
+      this.options.lastDate = moment(this.lastCustomDate, this.settings.dateFormat).format('YYYY-MM-DD')
       this.updateConfig()
       this.myChart.update()
     },
@@ -278,12 +231,12 @@ export default {
     },
 
     addOneDay: function (date) {
-      this[date] = moment(this[date], this.$root.settings.dateFormat).add(1, 'days').format(this.$root.settings.dateFormat)
+      this[date] = moment(this[date], this.settings.dateFormat).add(1, 'days').format(this.settings.dateFormat)
       this.throwCustom()
     },
 
     subtractOneDay: function (date) {
-      this[date] = moment(this[date], this.$root.settings.dateFormat).subtract(1, 'days').format(this.$root.settings.dateFormat)
+      this[date] = moment(this[date], this.settings.dateFormat).subtract(1, 'days').format(this.settings.dateFormat)
       this.throwCustom()
     },
 
@@ -293,29 +246,45 @@ export default {
       return tmp
     }
   },
-  mounted: function () {
-    const ctx = document.getElementById('myChart')
-
-    if (!this.$root.settings.lastfile) {
-      this.db = new Database()
-    } else {
-      try {
-        this.db = new Database(this.$root.settings.lastfile)
-      } catch (e) {
-        console.warn(e.message)
-        this.db = new Database()
+  computed: {
+    ...mapState(['settings', 'accounts'])
+  },
+  created () {
+    this.config = {
+      type: 'line',
+      data: {datasets: []},
+      options: {
+        legend: {
+          position: 'bottom'
+        },
+        fill: 'bottom',
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              parser: this.settings.dateFormat,
+              tooltipFormat: this.settings.dateFormat
+            },
+            scaleLabel: {
+              display: true,
+              labelString: Vue.filter('translate')('CHART.DATE')
+            }
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: Vue.filter('translate')('CHART.VALUE')
+            }
+          }]
+        }
       }
     }
-    // TODO only on app start
-    Migrator.migrate(this.db)
-    this.getAccounts(this)
-    // <!-- HERE -->
-    this.updateConfig()
-    if (this.$root.settings.theme === 'dark') {
+    if (this.settings.theme === 'dark') {
       this.config.options.legend.labels = {fontColor: 'rgb(237, 237, 237)'}
     }
+    this.updateConfig()
+    const ctx = document.getElementById('myChart')
     this.myChart = new Chart(ctx, this.config) // eslint-disable-line
-    ipcRenderer.send('open-report', 'chronoWin')
   }
 }
 </script>

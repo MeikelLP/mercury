@@ -1,5 +1,8 @@
 <template lang="html">
   <div>
+    <h2 class="title is-2">
+      {{ 'MAIN_PANE.TABS.ACCOUNTS' | translate }}
+    </h2>
     <filter-bar />
     <p class="has-text-centered">
       <span class="has-text-danger">{{balanceDown | format}}</span>
@@ -45,7 +48,7 @@
               {{ row.amount | format }}
             </td>
             <td class="has-text-centered" :class="{'has-text-success': !row.isClicked && !isFuture(row)}">
-              {{row.amount >= 0 ? row.amount.toLocaleString($root.settings.language): ''}}
+              {{row.amount | format }}
             </td>
           </tr>
         </tbody>
@@ -58,7 +61,9 @@ import FilterBar from '@/components/MainPane/accountsDetails/filterBar'
 
 import moment from 'moment'
 import Vue from 'vue'
+import { mapState } from 'vuex'
 import {stateIcon} from '../../util/icons'
+import { Db } from '@/store'
 
 export default {
   components: {
@@ -73,9 +78,6 @@ export default {
     }
   },
   computed: {
-    language () {
-      return this.$root.settings.language
-    },
     balanceDown() {
       let val = 0
       this.data.filter(x => x.amount < 0).forEach(x => {
@@ -89,11 +91,12 @@ export default {
         val += Number(x.amount)
       })
       return val
-    }
+    },
+    ...mapState(['settings'])
   },
   methods: {
     isFuture: function (row) {
-      return moment(row.date, this.$root.settings.dateFormat).isAfter(moment())
+      return moment(row.date, this.settings.dateFormat).isAfter(moment())
     },
     stateIcon (row) {
       return stateIcon(row.state)
@@ -103,7 +106,7 @@ export default {
       this.loading = true
       this.data = []
       let filters = this.$children[0].filters
-      let rows = this.$root.db.updateTable(filters.account.name, filters.date, filters.state, filters.amount)
+      let rows = Db.updateTable(filters.account.name, filters.date, filters.state, filters.amount)
       rows.map(r => {
         this.data.push({
           id: r[0],
