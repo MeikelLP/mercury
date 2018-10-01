@@ -270,30 +270,6 @@ function createWindow () {
       splash.destroy()
     }, 2500)
   })
-
-  mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would index windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null
-    if (typeof swin !== 'undefined' && swin !== null) {
-      swin.close()
-      swin = null
-    }
-    if (typeof chronoWin !== 'undefined' && chronoWin !== null) {
-      chronoWin.close()
-      chronoWin = null
-    }
-    if (typeof statisticWin !== 'undefined' && statisticWin !== null) {
-      statisticWin.close()
-      statisticWin = null
-    }
-    if (typeof balanceWin !== 'undefined' && balanceWin !== null) {
-      balanceWin.close()
-      balanceWin = null
-    }
-    // menu = null
-  })
 }
 
 // This method will be called when Electron has finished
@@ -324,153 +300,6 @@ app.on('before-quit', (event) => {
   }
 })
 
-let swin = null
-let chronoWin = null
-let statisticWin = null
-let balanceWin = null
-
-exports.openSettingWindow = function () {
-  const settingsWinURL = process.env.NODE_ENV === 'development'
-    ? `http://localhost:9080/settings.html`
-    : `file://${__dirname}/settings.html`
-  if (swin === null) {
-    swin = new BrowserWindow({
-      background: true,
-      frame: false,
-      width: 825,
-      minWidth: 300,
-      height: 600,
-      backgroundColor: '#282c34',
-      icon: path.join(__static, '/icons/png/Round/64x64.png')
-    })
-    swin.loadURL(settingsWinURL)
-    swin.setTouchBar(new TouchBar([
-      openTBPopover
-    ]))
-    swin.on('closed', () => {
-      swin = null
-    })
-  } else if (swin.isFocused()) {
-    swin.close()
-  } else {
-    swin.focus()
-  }
-}
-
-exports.openChronoWindow = function () {
-  const chronoWinURL = process.env.NODE_ENV === 'development'
-    ? `http://localhost:9080/chrono-view.html`
-    : `file://${__dirname}/chrono-view.html`
-  if (chronoWin === null) {
-    chronoWin = new BrowserWindow({
-      background: true,
-      frame: false,
-      width: 1100,
-      height: 650,
-      backgroundColor: '#282c34',
-      icon: path.join(__static, '/icons/png/Round/64x64.png')
-    })
-    chronoWin.loadURL(chronoWinURL)
-    chronoWin.setTouchBar(new TouchBar([
-      openTBPopover
-    ]))
-    chronoWin.on('closed', () => {
-      chronoWin = null
-    })
-  } else if (chronoWin.isFocused()) {
-    chronoWin.close()
-  } else {
-    chronoWin.focus()
-  }
-}
-
-exports.openStatisticWindow = function () {
-  const statisticTBar = new TouchBar([
-    openTBPopover,
-    new TouchBarSpacer({size: 'large'}),
-    new TouchBarSlider({
-      label: i18njs.get('.MAIN.TOUCHBAR.STATS.CATEGORIES'),
-      value: 6,
-      minValue: 3,
-      maxValue: 12,
-      change (newValue) { statisticWin.webContents.send('slider-input', newValue) }
-    }),
-    new TouchBarSpacer({size: 'large'}),
-    new TouchBarPopover({
-      label: i18njs.get('.MAIN.TOUCHBAR.STATS.TIME_SPAN'),
-      items: [
-        new TouchBarSegmentedControl({
-          segments: [
-            new TouchBarLabel({label: i18njs.get('.COMMON.TIME.TM')}),
-            new TouchBarLabel({label: i18njs.get('.COMMON.TIME.LM')}),
-            new TouchBarLabel({label: i18njs.get('.COMMON.TIME.TQ')}),
-            new TouchBarLabel({label: i18njs.get('.COMMON.TIME.LQ')}),
-            new TouchBarLabel({label: i18njs.get('.COMMON.TIME.TY')}),
-            new TouchBarLabel({label: i18njs.get('.COMMON.TIME.LY')}),
-            new TouchBarLabel({label: i18njs.get('.COMMON.TIME.*')})
-          ],
-          change (selectedIndex) {
-            statisticWin.webContents.send('toggle-time-span', selectedIndex)
-          }
-        })
-      ]
-    })
-  ])
-
-  if (statisticWin === null) {
-    const statisticWinURL = process.env.NODE_ENV === 'development'
-      ? `http://localhost:9080/statistic-view.html`
-      : `file://${__dirname}/statistic-view.html`
-    statisticWin = new BrowserWindow({
-      background: true,
-      frame: false,
-      width: 1015,
-      height: 600,
-      backgroundColor: '#282c34',
-      icon: path.join(__static, '/icons/png/Round/64x64.png')
-    })
-    statisticWin.loadURL(statisticWinURL)
-    statisticWin.setTouchBar(statisticTBar)
-    statisticWin.on('closed', () => {
-      statisticWin = null
-    })
-  } else if (statisticWin.isFocused()) {
-    statisticWin.close()
-  } else {
-    statisticWin.focus()
-  }
-  ipcMain.on('slider-display', (event, args) => {
-    statisticTBar.items['13'].value = Number(args)
-  })
-}
-
-exports.openBalanceWindow = function () {
-  const balanceWinURL = process.env.NODE_ENV === 'development'
-    ? `http://localhost:9080/balance-view.html`
-    : `file://${__dirname}/balance-view.html`
-  if (balanceWin === null) {
-    balanceWin = new BrowserWindow({
-      background: true,
-      frame: false,
-      width: 1000,
-      height: 600,
-      backgroundColor: '#282c34',
-      icon: path.join(__static, '/icons/png/Round/64x64.png')
-    })
-    balanceWin.loadURL(balanceWinURL)
-    balanceWin.setTouchBar(new TouchBar([
-      openTBPopover
-    ]))
-    balanceWin.on('closed', () => {
-      balanceWin = null
-    })
-  } else if (balanceWin.isFocused()) {
-    balanceWin.close()
-  } else {
-    balanceWin.focus()
-  }
-}
-
 ipcMain.on('open-file', (event) => {
   openfile((file) => {
     event.returnValue = file
@@ -481,28 +310,8 @@ ipcMain.on('file-to-save', (event, args) => {
   filePath = args
 })
 
-ipcMain.on('action-trigger', (event, args) => {
-  switch (args) {
-    case 'open-swin':
-      exports.openSettingWindow()
-      break
-    case 'open-chronowin':
-      exports.openChronoWindow()
-      break
-    case 'open-piewin':
-      exports.openStatisticWindow()
-      break
-    case 'open-balancewin':
-      exports.openBalanceWindow()
-      break
-    default:
-      mainWindow.webContents.send(args)
-      break
-  }
-})
-
-ipcMain.on('new-settings', (event, args) => {
-  mainWindow.webContents.send('new-settings', args)
+ipcMain.on('new-Settings', (event, args) => {
+  mainWindow.webContents.send('new-Settings', args)
 })
 
 ipcMain.on('save', (event, arg) => {

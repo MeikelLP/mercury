@@ -27,12 +27,18 @@ $input-color: $white-bis
 $input-border-color: $white-ter
 $input-hover-border-color: $white-bis
 
+$sidebar-background-color: $grey-darker
+$sidebar-border: 1px solid black
+
 html.dark
   background-color: $body-background-color
 
-.dark
   @import "~bulma/sass/base/helpers"
   @import "~bulma/sass/grid/all"
   @import "~bulma/sass/layout/all"
   @import "~bulma/sass/components/all"
   @import "~bulma/sass/elements/all"
+
+  #sidebar
+    background-color: $sidebar-background-color
+    border-right: $sidebar-border

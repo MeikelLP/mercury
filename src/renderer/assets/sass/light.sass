@@ -1,8 +1,14 @@
 @import "base"
 
-.light
+html.light
+  background-color: $body-background-color
+
   @import "~bulma/sass/base/helpers"
   @import "~bulma/sass/grid/all"
   @import "~bulma/sass/layout/all"
   @import "~bulma/sass/components/all"
   @import "~bulma/sass/elements/all"
+
+  #sidebar
+    background-color: $sidebar-background-color
+    border-right: $sidebar-border

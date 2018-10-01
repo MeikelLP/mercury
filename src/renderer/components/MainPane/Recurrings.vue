@@ -188,8 +188,8 @@
 </template>
 
 <script>
-import Modal from '@/components/common/modal'
-import CustomField from '@/components/common/customField'
+import Modal from '@/components/Common/Modal'
+import CustomField from '@/components/Common/CustomField'
 
 import { ipcRenderer, remote } from 'electron'
 import moment from 'moment'

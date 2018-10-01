@@ -49,14 +49,14 @@
 </template>
 
 <script>
-import report from '@/reports/components/report'
+import report from '@/components/Reports/components/Report'
 
 import { ipcRenderer } from 'electron'
-import chartJS from 'chart.js' // eslint-disable-line
+import chartJS from '../../../../node_modules/chart.js/src/chart' // eslint-disable-line
 import moment from 'moment'
 import Vue from 'vue'
 import { mapState } from 'vuex'
-import { Db } from '@/store'
+import { Db } from '@/store/index'
 
 // Use datepart SQL to filter by week / month / day / quarter /
 // https://docs.microsoft.com/en-us/sql/t-sql/functions/datepart-transact-sql?view=sql-server-2017

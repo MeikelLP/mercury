@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import General from './components/general'
-import SavedValues from './components/savedValues'
-import About from './components/about'
+import General from './Settings/General'
+import SavedValues from './Settings/SavedValues'
+import About from './Settings/About'
 
 import {ipcRenderer} from 'electron'
 import jsonfile from 'jsonfile'
@@ -60,11 +60,8 @@ export default {
     }
   },
   methods: {
-    toggleTab: function (tab) {
-      this.activeTab = tab
-    },
-
-    save: function () {
+    save () {
+      const self = this
       let previousSettings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
       this.loading = true
       this.settings.beneficiaries.filter(b => b !== null).sort(function (a, b) {
@@ -73,18 +70,14 @@ export default {
       this.settings.categories.filter(c => c !== null).sort(function (a, b) {
         return a.toLowerCase().localeCompare(b.toLowerCase())
       })
-      delete this.settings['theme === \'dark\'']
-      delete this.settings['theme === \'light\'']
       jsonfile.writeFile(path.join(__static, 'settings.json'), this.settings, {
         spaces: 2
       }, function (err) {
         if (err != null) {
           console.error(err)
         }
+        setTimeout(() => self.loading = false, 1000)
       })
-      setTimeout(() => {
-        window.close()
-      }, 1000)
       if (previousSettings.defaultCurrency !== this.settings.defaultCurrency || previousSettings.language !== this.settings.language || previousSettings.theme !== this.settings.theme || previousSettings.dateFormat !== this.settings.dateFormat) {
         if (previousSettings.language !== this.settings.language) {
           const options = {
@@ -98,7 +91,7 @@ export default {
           }
           ipcRenderer.send('notification', options)
         }
-        ipcRenderer.send('new-settings', this.settings)
+        ipcRenderer.send('new-Settings', this.settings)
       }
     }
   },

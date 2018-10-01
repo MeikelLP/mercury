@@ -10,14 +10,14 @@
     <div class="column is-full">
       <h2 class="title is-2">{{'MAIN_PANE.DASHBOARD.QUICK_ACCESS' | translate}}</h2>
       <div class="buttons">
-        <button class="button is-outlined" v-for="access in quickAccesses" :class="'is-' + access.color" :key="access.text" @click="send(access.ipcmsg)">
+        <router-link class="button is-outlined" v-for="access in quickAccesses" :class="'is-' + access.color" :key="access.text" :to="access.href">
           <span class="icon">
             <font-awesome-icon :icon="access.icon"/>
           </span>
           <span>
             {{ 'MAIN_PANE.DASHBOARD.ACCESSES.' + access.text | translate}}
           </span>
-        </button>
+        </router-link>
       </div>
     </div>
   </div>
@@ -37,42 +37,42 @@ export default {
         {
           plural: true,
           color: 'info',
-          ipcmsg: 'open-swin',
+          href: '/settings',
           text: 'SETTINGS',
           icon: 'sliders-h'
         },
         {
           plural: false,
           color: 'primary',
-          ipcmsg: 'open-chronowin',
+          href: '/report/chrono',
           text: 'CHRONOCHART',
           icon: 'chart-area'
         },
         {
           plural: true,
           color: 'success',
-          ipcmsg: 'open-recurring',
+          href: '/recurrings',
           text: 'RECURRING',
           icon: 'recycle'
         },
         {
           plural: false,
           color: 'warning',
-          ipcmsg: 'open-piewin',
+          href: '/report/statistics',
           text: 'STATISTIC',
           icon: 'chart-pie'
         },
         {
           plural: false,
           color: 'danger',
-          ipcmsg: 'open-balancewin',
+          href: '/report/balance',
           text: 'BALANCE',
           icon: 'chart-line'
         },
         {
           plural: false,
           color: 'purple',
-          ipcmsg: 'open-detail',
+          href: '/accountDetails',
           text: 'DETAIL',
           icon: 'th-list'
         }

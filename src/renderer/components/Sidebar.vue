@@ -1,5 +1,5 @@
 <template>
-  <section class="hero is-fullheight">
+  <section id="sidebar" class="hero is-fullheight">
     <div class="hero-head">
       <aside class="menu">
         <ul class="menu-list">
@@ -30,7 +30,7 @@
       <aside class="menu">
         <ul class="menu-list">
           <li>
-            <router-link to="/settings" :class="{'is-active': $route.path === '/settings'}">
+            <router-link to="/settings" :class="{'is-active': $route.path === '/Settings'}">
               <span class="menu-icon">
                 <font-awesome-icon icon="cogs" fixed-width/>
               </span>

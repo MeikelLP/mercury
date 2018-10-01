@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import CustomField from '../../common/customField'
+import CustomField from '../../Common/CustomField'
 import {ipcRenderer} from 'electron'
 import moment from 'moment'
 import Vue from 'vue'

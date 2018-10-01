@@ -47,16 +47,16 @@
 </template>
 
 <script>
-import report from '@/reports/components/report'
+import report from '@/components/Reports/components/Report'
 
-import ToggleButton from './components/toggleButton'
+import ToggleButton from './components/ToggleButton'
 
 import { ipcRenderer } from 'electron'
-import chartJS from 'chart.js' // eslint-disable-line
+import chartJS from '../../../../node_modules/chart.js/src/chart' // eslint-disable-line
 import moment from 'moment'
 import Vue from 'vue'
 import { mapState } from 'vuex'
-import { Db } from '@/store'
+import { Db } from '@/store/index'
 
 export default {
   components: {

@@ -4,17 +4,17 @@ import MainPane from '../components/MainPane'
 // general
 import Accounts from '../components/AccountsPane'
 import Operations from '../components/OperationPane'
-import Dashboard from '../components/MainPane/dashboard'
-import AccountDetails from '../components/MainPane/accountsDetail'
-import Recurrings from '../components/MainPane/recurrings'
+import Dashboard from '../components/MainPane/Dashboard'
+import AccountDetails from '../components/MainPane/AccountsDetail'
+import Recurrings from '../components/MainPane/Recurrings'
 
-// reports
-import ReportChrono from '../reports/chronoView.vue'
-import ReportStatistics from '../reports/statisticView.vue'
-import ReportBalance from '../reports/balanceView.vue'
+// Reports
+import ReportChrono from '../components/Reports/ChronoView.vue'
+import ReportStatistics from '../components/Reports/StatisticView.vue'
+import ReportBalance from '../components/Reports/BalanceView.vue'
 
-// settings
-import Settings from '../settings/Settings.vue'
+// Settings
+import Settings from '../components/Settings.vue'
 
 export default [
   {

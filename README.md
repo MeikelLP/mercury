@@ -4,8 +4,8 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/761fdc1dac484273b25eb5d1d8f9e6d2)](https://app.codacy.com/app/Delni/mercury?utm_source=github.com&utm_medium=referral&utm_content=Delni/mercury&utm_campaign=badger)
 
-Current version packed : `v1.1.2`  
-The budget planner of the 21st century  
+Current version packed : `v1.1.2`
+The budget planner of the 21st century
 
 :construction: Please be aware that Mercury is in constant development, you may encounter unknown bug :construction:
 
@@ -13,12 +13,12 @@ If you like my work, please [donate for coffee](http://ko-fi.com/delnim) ! :coff
 
 ---
 
-*Mercury* offer basic budget planner functionality, such as managing account, add / edit / delete operation... I always wanted a tool as MSMoney or [HomeBank](http://homebank.free.fr), but with improved and modern UI. HomeBank was the software I used to use, and many features come from there.  
+*Mercury* offer basic budget planner functionality, such as managing account, add / edit / delete operation... I always wanted a tool as MSMoney or [HomeBank](http://homebank.free.fr), but with improved and modern UI. HomeBank was the software I used to use, and many features come from there.
 This application is built on top of [Electron](electron.atom.io)
 
 Developped with ♥ for you
 
-Supported languages : `English`,`Français`  
+Supported languages : `English`,`Français`
 *Send an e-mail if you want to help to translate in your language!*
 
 ---
@@ -34,18 +34,18 @@ Supported languages : `English`,`Français`
  * Create / Edit / Delete any operation
  * Create / Edit / Delete recurring operation
  * Filter operation with easy-to-access basic filters
- * Manage your outcome with reports over time / categories
- * Manage beneficiaries and categories in the settings
+ * Manage your outcome with Reports over time / categories
+ * Manage beneficiaries and categories in the Settings
  * `MacOS` TouchBar integration
  * Choose your (theme) side
- 
- 
+
+
 # Available languages
  * English
  * French
  * Polish (thanks to [@objectprogr](https://github.com/objectprogr))
 
-## Roadmap : 
+## Roadmap :
  * [ ] Add version update checker
  * [ ] Add transaction binding from other currency ([issue#3](https://github.com/Delni/mercury/issues/3))
  * [ ] Add data encryption ([issue#8](https://github.com/Delni/mercury/issues/8))
@@ -71,10 +71,10 @@ $ yarn run dev
 ```
 
 # Downloads
-[Go to downloads page](https://github.com/Delni/mercury/releases)  
+[Go to downloads page](https://github.com/Delni/mercury/releases)
 Download for MacOS & Windows
 
-*Linux coming soon (as soon as tested)*  
+*Linux coming soon (as soon as tested)*
 *Not available at the moment.*
 
 # Contribute

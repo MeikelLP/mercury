@@ -124,7 +124,7 @@
 </template>
 
 <script>
-import modal from '@/components/common/modal'
+import modal from '@/components/Common/Modal'
 
 import {ipcRenderer, remote} from 'electron'
 import Vue from 'vue'

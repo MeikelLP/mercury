@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import FilterBar from '@/components/MainPane/accountsDetails/filterBar'
+import FilterBar from '@/components/MainPane/AccountsDetails/FilterBar'
 
 import moment from 'moment'
 import Vue from 'vue'

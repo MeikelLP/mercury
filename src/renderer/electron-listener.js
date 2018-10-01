@@ -10,6 +10,6 @@ ipcRenderer.on('open-new-file', () => {
 ipcRenderer.on('selected-file', (event, arg) => {
   openDatabase(arg)
 })
-ipcRenderer.on('new-settings', (event, arg) => {
+ipcRenderer.on('new-Settings', (event, arg) => {
   store.state.settings = arg // TODO why?
 })

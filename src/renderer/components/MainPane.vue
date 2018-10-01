@@ -16,9 +16,9 @@
 
 <script>
 // Components
-import Dashboard from '@/components/MainPane/dashboard'
-import AccountsDetail from '@/components/MainPane/accountsDetail'
-import Recurrings from '@/components/MainPane/recurrings'
+import Dashboard from '@/components/MainPane/Dashboard'
+import AccountsDetail from '@/components/MainPane/AccountsDetail'
+import Recurrings from '@/components/MainPane/Recurrings'
 
 // Third party
 import moment from 'moment'
@@ -132,7 +132,7 @@ export default {
       tabToggle('accounts-detail')
     })
 
-    ipcRenderer.on('new-settings', function () {
+    ipcRenderer.on('new-Settings', function () {
       tabToggle('dashboard')
     })
 

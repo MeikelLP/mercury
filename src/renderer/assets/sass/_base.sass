@@ -4,6 +4,9 @@ $custom-colors: ("purple": #8445d6)
 @import "~bulma/sass/base/generic"
 @import "~bulma/sass/base/minireset"
 
+$sidebar-background-color: $white-bis !default
+$sidebar-border: 1px solid $white !default
+
 html
   overflow-y: auto
 
@@ -15,6 +18,12 @@ html
   pointer-events: none
   opacity: .65
 
+#sidebar
+  .menu-label
+    padding: 0 0.5rem
+
+  .menu-list li a
+    border-radius: 0
 
 //
 //html
@@ -81,7 +90,7 @@ html
 //  max-height: 700px
 //  overflow-y: auto
 //
-//#settings-body
+//#Settings-body
 //  width: 95vw
 //  height: 69vh
 //  max-width: 95vw
@@ -146,13 +155,13 @@ html
 //
 ///* Vue specific css */
 ////
-/////* filterBar.vue */
+/////* FilterBar.vue */
 ////.control select
 ////  border-top-left-radius: 0
 ////  border-bottom-left-radius: 0
 ////  border-left: none
 //
-///* accountsDetails.vue */
+///* AccountsDetails.vue */
 //.is-table-overflown
 //  height: 50vh
 //  overflow: scroll
@@ -179,7 +188,7 @@ html
 //  height: 0
 //  transform: translateX(30px)
 //
-///* recurrings.vue */
+///* Recurrings.vue */
 //.is-table-overflown-2
 //  height: 40vh
 //  overflow: scroll

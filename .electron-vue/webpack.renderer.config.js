@@ -147,62 +147,6 @@ let rendererConfig = {
         ? path.resolve(__dirname, '../node_modules')
         : false
     }),
-    new HtmlWebpackPlugin({
-      filename: 'settings.html',
-      template: path.resolve(__dirname, '../src/settings.ejs'),
-      chunks: ['settings'],
-      title: 'Mercury - settings',
-      minify: {
-        collapseWhitespace: true,
-        removeAttributeQuotes: true,
-        removeComments: true
-      },
-      nodeModules: process.env.NODE_ENV !== 'production'
-        ? path.resolve(__dirname, '../node_modules')
-        : path.resolve(__dirname, '../../node_modules')
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'balance-view.html',
-      template: path.resolve(__dirname, '../src/index.ejs'),
-      chunks: ['balance'],
-      title: 'Mercury - balance view',
-      minify: {
-        collapseWhitespace: true,
-        removeAttributeQuotes: true,
-        removeComments: true
-      },
-      nodeModules: process.env.NODE_ENV !== 'production'
-        ? path.resolve(__dirname, '../node_modules')
-        : false
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'statistic-view.html',
-      template: path.resolve(__dirname, '../src/index.ejs'),
-      chunks: ['statistic'],
-      title: 'Mercury - Statistic view',
-      minify: {
-        collapseWhitespace: true,
-        removeAttributeQuotes: true,
-        removeComments: true
-      },
-      nodeModules: process.env.NODE_ENV !== 'production'
-        ? path.resolve(__dirname, '../node_modules')
-        : false
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'chrono-view.html',
-      template: path.resolve(__dirname, '../src/index.ejs'),
-      chunks: ['chrono'],
-      title: 'Mercury - Chrono view',
-      minify: {
-        collapseWhitespace: true,
-        removeAttributeQuotes: true,
-        removeComments: true
-      },
-      nodeModules: process.env.NODE_ENV !== 'production'
-        ? path.resolve(__dirname, '../node_modules')
-        : false
-    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   ],
@@ -222,7 +166,7 @@ let rendererConfig = {
 }
 
 /**
- * Adjust rendererConfig for development settings
+ * Adjust rendererConfig for development Settings
  */
 if (process.env.NODE_ENV !== 'production') {
   rendererConfig.plugins.push(
@@ -233,7 +177,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 /**
- * Adjust rendererConfig for production settings
+ * Adjust rendererConfig for production Settings
  */
 if (process.env.NODE_ENV === 'production') {
   rendererConfig.devtool = ''
