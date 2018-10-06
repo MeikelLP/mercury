@@ -4,7 +4,7 @@
     <p class="title">
       {{'ACCOUNTS_PANE.DEFAULT'| translate}}
       <span class="icon">
-        <font-awesome-icon icon="exclamation-circle" size="xs" class="has-text-warning" v-if="unsaved"/>
+        <font-awesome-icon icon="exclamation-circle" size="xs" class="has-text-warning" v-if="hasChanges"/>
       </span>
     </p>
     <!-- createAccount modal -->
@@ -80,28 +80,22 @@
               <p>
                 {{ 'ACCOUNTS_PANE.CARDS.BANK'   | translate }}
                 <span class="amount" :class="{ 'has-text-danger': account.inBank <= 0 }">
-                  {{account.inBank | format}}
-                  <span class="icon">
-                    <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
-                  </span>
+                  {{account.inBank || 0 | format}}
+                  <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
                 </span>
               </p>
               <p>
                 {{ 'ACCOUNTS_PANE.CARDS.TODAY'  | translate }}
                 <span class="amount" :class="{ 'has-text-danger': account.today <= 0 }">
-                  {{account.today | format}}
-                  <span class="icon">
-                    <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
-                  </span>
+                  {{account.today || 0 | format}}
+                  <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
                 </span>
               </p>
               <p>
                 {{ 'ACCOUNTS_PANE.CARDS.FUTURE' | translate }}
                 <span class="amount" :class="{ 'has-text-danger': account.future <= 0 }">
-                  {{account.future | format}}
-                  <span class="icon">
-                    <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
-                  </span>
+                  {{account.future || 0 | format}}
+                  <font-awesome-icon size="sm" :icon="currencyIcon(account.currency)"/>
                 </span>
               </p>
             </div>
@@ -139,7 +133,7 @@ export default {
   components: {
     modal
   },
-  data: function () {
+  data () {
     return {
       // Variables
       loading: false,
@@ -152,8 +146,8 @@ export default {
     }
   },
   computed: {
-    unsaved(){
-      return this.$store.state.unsaved
+    hasChanges(){
+      return this.$store.state.hasChanges
     },
     ...mapState(['accounts']),
     lastFile(){
@@ -173,7 +167,6 @@ export default {
       }
       try {
         Db.addAccount(account.name, account.currency, account.amount)
-        this.showUnsavedTag()
         this.loading = false
         this.closeModal()
       } catch (e) {
@@ -197,16 +190,6 @@ export default {
       }
     },
 
-    showUnsavedTag: function () {
-      this.unsaved = true
-      ipcRenderer.send('set-prevent-close', true)
-    },
-
-    hideUnsavedTag: function () {
-      this.unsaved = false
-      ipcRenderer.send('set-prevent-close', false)
-    },
-
     showCreateModal: function () {
       this.createModalShown = true
     },
@@ -220,13 +203,13 @@ export default {
       return configTranslation(currency)
     }
   },
-  created: function () {
+  created () {
     const vm = this
 
     let force = false
     remote.app.on('before-quit', function (evt) {
       console.log('before')
-      if (vm.unsaved && !force) {
+      if (vm.hasChanges && !force) {
         setTimeout(() => {
           const options = {
             type: 'warning',

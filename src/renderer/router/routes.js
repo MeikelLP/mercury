@@ -3,7 +3,8 @@ import MainPane from '../components/MainPane'
 
 // general
 import Accounts from '../components/AccountsPane'
-import Operations from '../components/OperationPane'
+import OperationPane from '../components/OperationPane'
+import Operations from '../components/Operations/Index'
 import Dashboard from '../components/MainPane/Dashboard'
 import AccountDetails from '../components/MainPane/AccountsDetail'
 import Recurrings from '../components/MainPane/Recurrings'
@@ -36,6 +37,17 @@ export default [
   {
     path: '/operations',
     name: '$OPERATION_PANE.DEFAULT',
+    component: OperationPane,
+    meta: {
+      requiresAccount: true,
+      group: '$GENERAL',
+      icon: 'database',
+      position: 1
+    }
+  },
+  {
+    path: '/TODO',
+    name: 'TODO',
     component: Operations,
     meta: {
       requiresAccount: true,

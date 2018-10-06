@@ -2,14 +2,13 @@ import path from 'path'
 import i18njs from 'i18njs'
 import moment from 'moment'
 import jsonfile from 'jsonfile'
+import {store} from '../store'
 
 import chartJS from 'chart.js' // eslint-disable-line
 
-let globSettings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
-
-const lang = jsonfile.readFileSync(`${__static}/lang/${globSettings.language}_.json`)
-i18njs.add(globSettings.language, '', lang)
-i18njs.setLang(globSettings.language)
+const lang = jsonfile.readFileSync(`${__static}/lang/${store.state.settings.language}_.json`)
+i18njs.add(store.state.settings.language, '', lang)
+i18njs.setLang(store.state.settings.language)
 
 export default class ChronoChart {
   constructor (ctx, accounts, db) {

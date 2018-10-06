@@ -4,6 +4,8 @@ import Buefy from 'buefy'
 import moment from 'moment'
 
 import './assets/sass/all.sass'
+import '@fortawesome/fontawesome-free/scss/fontawesome.scss'
+import '@fortawesome/fontawesome-free/scss/solid.scss'
 
 import App from './App'
 import Router from './router'
@@ -18,7 +20,7 @@ Vue.http = Vue.prototype.$http = Axios
 Vue.config.productionTip = false
 
 Vue.use(Buefy, {
-  defaultIconPack: 'fa'
+  defaultIconPack: 'fas'
 })
 
 /* eslint-disable no-new */

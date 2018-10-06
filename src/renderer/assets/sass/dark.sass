@@ -14,6 +14,7 @@ $label-color: $white-ter
 $table-background-color: transparent
 $table-row-hover-background-color: lighten($background, 5)
 $table-striped-row-even-hover-background-color: $table-row-hover-background-color
+$table-striped-row-even-background-color: lighten($table-row-hover-background-color, 5)
 $table-color: $text
 
 $tabs-link-hover-color: $text-strong
@@ -21,6 +22,8 @@ $body-background-color: $black-ter
 $modal-card-body-background-color: $background
 $card-background-color: $grey-darker
 $notification-background-color: $grey-darker
+$dropdown-content-background-color: lighten($body-background-color, 5)
+$dropdown-item-color: $text
 
 $input-background-color: $grey-darker
 $input-color: $white-bis
@@ -42,3 +45,14 @@ html.dark
   #sidebar
     background-color: $sidebar-background-color
     border-right: $sidebar-border
+
+  select option
+    color: $text
+
+  // buefy fixes
+  .datepicker .datepicker-table .datepicker-body .datepicker-row .datepicker-cell.is-selectable
+    color: white
+
+    &:hover:not(.is-selected),
+    &:focus:not(.is-selected)
+      background-color: $button-hover-color

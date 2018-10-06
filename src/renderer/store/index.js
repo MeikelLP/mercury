@@ -7,7 +7,24 @@ import path from 'path'
 
 Vue.use(Vuex)
 
+const defaultSettings = {
+  "dateFormat": "DD/MM/YYYY",
+  "defaultCurrency": "eur",
+  "language": "en",
+  "defaultOffset": 15,
+  "defaultTimeSpan": "day",
+  "displayHelpers": false,
+  "theme": "light",
+  "beneficiaries": [],
+  "categories": [],
+  "labels": [],
+  "lastfile": null,
+  "useDatepicker": true
+}
 const settings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
+if (Object.keys(settings).length === 0) {
+  Object.assign(settings, defaultSettings)
+}
 
 export let Db = new Database(settings.lastfile) // TODO export only temporary
 
