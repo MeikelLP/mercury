@@ -2,41 +2,49 @@
   {
     "key": "btc",
     "name": "Bitcon",
-    "icon": ["fab", "bitcoin"]
+    "icon": ["fab", "bitcoin"],
+    "char": "B"
   },
   {
     "key": "usd",
     "name": "Dollar",
-    "icon": "dollar-sign"
+    "icon": "dollar-sign",
+    "char": "$"
   },
   {
     "key": "eur",
     "name": "Euro",
-    "icon": "euro-sign"
+    "icon": "euro-sign",
+    "char": "€"
   },
   {
     "key": "try",
     "name": "Lira",
-    "icon": "lira-sign"
+    "icon": "lira-sign",
+    "char": "₺"
   },
   {
     "key": "gbp",
     "name": "$CURRENCIES.POUND",
-    "icon": "pound-sign"
+    "icon": "pound-sign",
+    "char": "£"
   },
   {
     "key": "inr",
     "name": "Rupee",
-    "icon": "rupee-sign"
+    "icon": "rupee-sign",
+    "char": "₹"
   },
   {
     "key": "rub",
     "name": "Rouble",
-    "icon": "ruble-sign"
+    "icon": "ruble-sign",
+    "char": "₽"
   },
   {
     "key": "cny",
     "name": "Yen",
-    "icon": "yen-sign"
+    "icon": "yen-sign",
+    "char": "¥"
   }
 ]

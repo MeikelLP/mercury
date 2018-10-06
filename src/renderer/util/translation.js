@@ -1,4 +1,7 @@
 import { translate } from '../filters'
+import OPERATION_TYPES from '../../config/operation-types'
+import OPERATION_STATES from '../../config/operation-states'
+
 
 /**
  * Translates a configuration name to its equivalent.
@@ -10,9 +13,21 @@ export function configTranslation (obj) {
   if (obj instanceof Object) {
     name = obj.name
   } else {
-    name = obj.toString()
+    name = obj + ""
   }
   return name.startsWith('$')
     ? translate(name.replace('$', ''))
     : name
+}
+
+export function translateOperationType (key){
+  const type = OPERATION_TYPES.filter(x => x.key === key)[0]
+
+  return type ? configTranslation(type.name) : key
+}
+
+export function translateOperationState (key){
+  const state = OPERATION_STATES.filter(x => x.key === key)[0]
+
+  return state ? configTranslation(state.name) : key
 }
