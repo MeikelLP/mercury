@@ -5,11 +5,11 @@ import {store} from '@/store'
 
 Vue.use(Router)
 
-const index = new Router({
+const router = new Router({
   routes: ROUTES
 })
 
-index.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
   if (to.matched.some(r => r.meta.requiresAccount)) {
     if (store.state.accounts.length) {
       next()
@@ -23,4 +23,4 @@ index.beforeEach((to, from, next) => {
   }
 })
 
-export default index
+export default router

@@ -13,6 +13,7 @@ import { store, openDatabase } from './store'
 import './icons'
 import './filters'
 import './electron-listener'
+import {ipcRenderer} from 'electron'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = Axios
@@ -24,7 +25,7 @@ Vue.use(Buefy, {
 })
 
 /* eslint-disable no-new */
-new Vue({
+const vueInstance = new Vue({
   router: Router,
   store: store,
   components: { App },
@@ -50,3 +51,7 @@ new Vue({
     }
   }
 }).$mount('#app')
+
+ipcRenderer.on('goto', (event, arg) => {
+  vueInstance.$router.push(arg.path)
+})

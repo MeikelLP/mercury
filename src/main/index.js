@@ -73,50 +73,62 @@ const template = [{
   }]
 }, {
   role: 'editMenu'
-}, {
-  label: i18njs.get('.MAIN.MENU.REPORTS.DEFAULT'),
-  submenu: [{
-    label: i18njs.get('.MAIN.MENU.REPORTS.TIME'),
-    accelerator: 'Alt+T',
-    icon: path.join(__static, '/assets/img/fa-area-chart_16.png'),
-    click () {
-      exports.openChronoWindow()
-    }
-  }, {
-    label: i18njs.get('.MAIN.MENU.REPORTS.STATISTIC'),
-    accelerator: 'Alt+S',
-    icon: path.join(__static, '/assets/img/fa-pie-chart_16.png'),
-    click () {
-      exports.openStatisticWindow()
-    }
-  }, {
-    label: i18njs.get('.MAIN.MENU.REPORTS.BALANCE'),
-    accelerator: 'Alt+B',
-    icon: path.join(__static, '/assets/img/fa-line-chart_16.png'),
-    click () {
-      exports.openBalanceWindow()
-    }
-  }]
-}, {
-  label: i18njs.get('.MAIN.MENU.WINDOWS.DEFAULT'),
-  role: 'window',
-  submenu: [{
-    role: 'reload'
-  }, {
-    role: 'minimize'
-  }, {
-    role: 'togglefullscreen'
-  }, {
-    role: 'close'
-  }]
-}, {
-  role: 'help',
-  submenu: [
-    {
-      label: i18njs.get('.MAIN.MENU.HELP.LEARN'),
-      click () { require('electron').shell.openExternal('https://electron.atom.io') }
+},
+  {
+    label: 'AKTION TODO',
+    submenu: [
+      {
+        label: 'CREATE TODO',
+        accelerator: 'Plus',
+        click: () => {
+          mainWindow.webContents.send('goto', {path: '/TODO#create'})
+        }
+      }]
+  },
+  {
+    label: i18njs.get('.MAIN.MENU.REPORTS.DEFAULT'),
+    submenu: [{
+      label: i18njs.get('.MAIN.MENU.REPORTS.TIME'),
+      accelerator: 'Alt+T',
+      icon: path.join(__static, '/assets/img/fa-area-chart_16.png'),
+      click () {
+        exports.openChronoWindow()
+      }
+    }, {
+      label: i18njs.get('.MAIN.MENU.REPORTS.STATISTIC'),
+      accelerator: 'Alt+S',
+      icon: path.join(__static, '/assets/img/fa-pie-chart_16.png'),
+      click () {
+        exports.openStatisticWindow()
+      }
+    }, {
+      label: i18njs.get('.MAIN.MENU.REPORTS.BALANCE'),
+      accelerator: 'Alt+B',
+      icon: path.join(__static, '/assets/img/fa-line-chart_16.png'),
+      click () {
+        exports.openBalanceWindow()
+      }
     }]
-}]
+  }, {
+    label: i18njs.get('.MAIN.MENU.WINDOWS.DEFAULT'),
+    role: 'window',
+    submenu: [{
+      role: 'reload'
+    }, {
+      role: 'minimize'
+    }, {
+      role: 'togglefullscreen'
+    }, {
+      role: 'close'
+    }]
+  }, {
+    role: 'help',
+    submenu: [
+      {
+        label: i18njs.get('.MAIN.MENU.HELP.LEARN'),
+        click () { require('electron').shell.openExternal('https://electron.atom.io') }
+      }]
+  }]
 
 if (authorizeDev) {
   template.push({
@@ -410,7 +422,7 @@ function saveAs () {
   const options = {
     title: ('Save your data'),
     filters: [
-      { name: 'Mercury Files', extensions: ['mcy'] }
+      {name: 'Mercury Files', extensions: ['mcy']}
     ]
   }
   dialog.showSaveDialog(mainWindow, options, function (filename) {
@@ -418,6 +430,7 @@ function saveAs () {
     filePath = filename
   })
 }
+
 /**
  * Auto Updater
  *

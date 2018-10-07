@@ -2,8 +2,8 @@
   <section class="section">
     <h3 class="title is-3">TODO</h3>
 
-    <button class="button is-primary" @click="createNewEntry = true" v-if="!createNewEntry">Create TODO</button>
-    <button class="button is-danger" @click="createNewEntry = false" v-else>Cancel Creation TODO</button>
+    <router-link class="button is-primary" to="#create" v-if="!createNewEntry">Create TODO</router-link>
+    <router-link class="button is-danger" :to="$route.path" v-else>Cancel Creation TODO</router-link>
 
     <b-dropdown hoverable class="is-pulled-right is-right">
       <button class="button is-info" slot="trigger">
@@ -19,7 +19,7 @@
         </b-checkbox>
       </b-dropdown-item>
     </b-dropdown>
-    <operation-form @submit="submitNew" v-if="createNewEntry" :columns="columns"/>
+    <operation-form @submit="submitNew" v-if="createNewEntry" :columns="columns" @cancel="cancelNew"/>
     <b-table :data="data">
       <template slot-scope="props">
         <b-table-column v-for="(column, i) in columns"
@@ -85,22 +85,24 @@
             label: 'Amount TODO',
             visible: true,
             numeric: true,
-            format: (num, obj) => format(num) + " " + this.getAccountCurrency(obj.account_name).char
+            format: (num, obj) => format(num) + ' ' + this.getAccountCurrency(obj.account_name).char
           },
           {
             field: 'account_name',
             label: 'Account TODO',
             visible: true
           },
-        ],
-        createNewEntry: false
+        ]
       }
     },
     methods: {
       submitNew (newEntry) {
 
         this.data.push(newEntry)
-        this.createNewEntry = false
+        this.$router.push(this.$route.path)
+      },
+      cancelNew () {
+        this.$router.push(this.$route.path)
       },
       search () {
         this.data = search()
@@ -120,7 +122,15 @@
       this.search()
     },
     computed: {
-      ...mapState(['settings', 'accounts'])
+      ...mapState(['settings', 'accounts']),
+      createNewEntry () {
+        return this.$route.hash === '#create'
+      }
+    },
+    watch: {
+      '$route' (to, from) {
+        this.createNewEntry = to.hash === '#create'
+      }
     }
   }
 </script>
