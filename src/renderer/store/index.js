@@ -4,22 +4,23 @@ import Vuex from 'vuex'
 import Database from '../assets/Database.class'
 import jsonfile from 'jsonfile'
 import path from 'path'
+import { ipcRenderer } from 'electron'
 
 Vue.use(Vuex)
 
 const defaultSettings = {
-  "dateFormat": "DD/MM/YYYY",
-  "defaultCurrency": "eur",
-  "language": "en",
-  "defaultOffset": 15,
-  "defaultTimeSpan": "day",
-  "displayHelpers": false,
-  "theme": "light",
-  "beneficiaries": [],
-  "categories": [],
-  "labels": [],
-  "lastfile": null,
-  "useDatepicker": true
+  'dateFormat': 'DD/MM/YYYY',
+  'defaultCurrency': 'eur',
+  'language': 'en',
+  'defaultOffset': 15,
+  'defaultTimeSpan': 'day',
+  'displayHelpers': false,
+  'theme': 'light',
+  'beneficiaries': [],
+  'categories': [],
+  'labels': [],
+  'lastfile': null,
+  'useDatepicker': true
 }
 const settings = jsonfile.readFileSync(path.join(__static, 'settings.json'))
 if (Object.keys(settings).length === 0) {
@@ -65,23 +66,48 @@ export const store = new Vuex.Store({
     },
     removeAccount (state, index) {
       state.accounts = state.accounts.splice(index, 1)
+    },
+    refreshAccounts (state, accounts) {
+      state.accounts = accounts
     }
   }
 })
 
-export function openDatabase (file = null) {
-  console.log('opening database file ', file)
-  Db = new Database(file)
+export function openDatabase (filePath = null) {
+  console.log('opening database file ', filePath)
+  Db = new Database(filePath)
+
+  try {
+    const accounts = Db.exec('SELECT * FROM accounts')
+    store.commit('refreshAccounts', accounts)
+  } catch (e) {
+    if (e.message === 'Empty response') {
+      // empty response is ok
+      store.commit('refreshAccounts', [])
+    } else {
+      ipcRenderer.send('alert', {
+        type: 'error',
+        message: `Could not read from accounts in file ${filePath}. Maybe the file is not valid?`,
+        error: e
+      })
+    }
+  }
   store.state.hasChanges = false
-  if (file) {
-    store.state.settings.lastfile = file
+  updateSettingsFile(filePath)
+}
+
+function updateSettingsFile (filePath) {
+  if (filePath) {
+    store.state.settings.lastfile = filePath
     jsonfile.writeFile(path.join(__static, 'settings.json'), store.state.settings, {
       spaces: 2
     }, function (err) {
-      if (err != null) {
-        console.error(err)
-      } else {
-        store.state.hasChanges = false
+      if (err) {
+        ipcRenderer.send('alert', {
+          type: 'error',
+          message: `Could not save settings file at ${filePath}.`,
+          error: e
+        })
       }
     })
   } else {
@@ -89,17 +115,7 @@ export function openDatabase (file = null) {
   }
 }
 
-export function saveDatabase (path) {
-  Db.export(path)
-  console.log(state)
-  store.state.settings.lastfile = path
-  jsonfile.writeFile(path.join(__static, 'settings.json'), store.state.settings, {
-    spaces: 2
-  }, function (err) {
-    if (err != null) {
-      console.error(err)
-    } else {
-      store.state.hasChanges = false
-    }
-  })
+export function saveDatabase (filePath) {
+  Db.export(filePath)
+  updateSettingsFile(filePath)
 }

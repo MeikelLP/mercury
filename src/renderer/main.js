@@ -48,6 +48,11 @@ const vueInstance = new Vue({
   watch: {
     '$store.state.settings.theme'(){
       document.documentElement.className = this.$store.state.settings.theme
+    },
+    '$store.state.accounts'(val, old){
+      if(val.length === 0) {
+        this.$router.push('/accounts')
+      }
     }
   }
 }).$mount('#app')

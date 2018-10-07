@@ -1,5 +1,5 @@
 import {ipcRenderer} from 'electron'
-import {saveDatabase, openDatabase, store} from '@/store'
+import {saveDatabase, openDatabase, store} from './store'
 
 ipcRenderer.on('saved-file', (event, arg) => {
   saveDatabase(arg)

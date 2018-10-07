@@ -97,7 +97,6 @@
     },
     methods: {
       submitNew (newEntry) {
-
         this.data.push(newEntry)
         this.$router.push(this.$route.path)
       },
@@ -130,6 +129,9 @@
     watch: {
       '$route' (to, from) {
         this.createNewEntry = to.hash === '#create'
+      },
+      accounts () {
+        this.search()
       }
     }
   }

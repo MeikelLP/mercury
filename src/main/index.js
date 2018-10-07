@@ -390,6 +390,14 @@ ipcMain.on('set-prevent-close', (event, args) => {
   global.preventClose = args
 })
 
+ipcMain.on('alert', (event, args) => {
+  dialog.showMessageBox({
+    title: args.type,
+    message: args.message
+  })
+  console.error(args.error)
+})
+
 function newfile () {
   filePath = ''
   mainWindow.webContents.send('open-new-file')
