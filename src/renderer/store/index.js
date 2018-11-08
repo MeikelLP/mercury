@@ -27,7 +27,12 @@ if (Object.keys(settings).length === 0) {
   Object.assign(settings, defaultSettings)
 }
 
-export let Db = new Database(settings.lastfile) // TODO export only temporary
+export let Db
+try {
+  Db = new Database(settings.lastfile) // TODO export only temporary
+} catch (e) {
+  Db = new Database()
+}
 
 let accounts = []
 try {
@@ -75,7 +80,14 @@ export const store = new Vuex.Store({
 
 export function openDatabase (filePath = null) {
   console.log('opening database file ', filePath)
-  Db = new Database(filePath)
+
+  try {
+    Db = new Database(filePath)
+  } catch (e) {
+    console.error(`failed to open file: ${filePath} - using new file`)
+    Db = new Database()
+  }
+
 
   try {
     const accounts = Db.exec('SELECT * FROM accounts')

@@ -37,6 +37,31 @@
            :title="'MAIN_PANE.RECURRINGS.MODAL.TITLE.'+modalConfig.translate| translate"
           v-if="modalConfig.icon">
       <div v-if="modalConfig.translate !== 'LAUNCH'">
+        <p class="title">{{'MAIN_PANE.RECURRINGS.MODAL.TITLE.'+modalConfig.translate| translate}}</p>
+        <div class="columns">
+          <div class="content column">
+
+            <custom-field class="flex" fa="calendar">
+              <input class="input" type="text" :placeholder="settings.dateFormat" v-model="newRecurringOperation.date">
+            </custom-field>
+
+            <div class="field has-addons flex">
+              <div class="control">
+                <a class="button is-tag is-primary"><icon fa="retweet"/></a>
+              </div>
+              <div class="control" style="width: 4vw">
+                <input class="input" type="number" min="1" v-model="newRecurringOperation.offset">
+              </div>
+              <div class="control select is-primary">
+                <select class="select" v-model="newRecurringOperation.timespan">
+                  <option value="day">{{ (newRecurringOperation.offset > 1 ? "TIME_SPAN.PLURAL.":"TIME_SPAN.SINGULAR.")+"days"| translate}}</option>
+                  <option value="week">{{ (newRecurringOperation.offset > 1 ? "TIME_SPAN.PLURAL.":"TIME_SPAN.SINGULAR.")+"weeks"| translate}}</option>
+                  <option value="month">{{ (newRecurringOperation.offset > 1 ? "TIME_SPAN.PLURAL.":"TIME_SPAN.SINGULAR.")+"months"| translate}}</option>
+                  <option value="quarter">{{ (newRecurringOperation.offset > 1 ? "TIME_SPAN.PLURAL.":"TIME_SPAN.SINGULAR.")+"quarters"| translate}}</option>
+                  <option value="year">{{ (newRecurringOperation.offset > 1 ? "TIME_SPAN.PLURAL.":"TIME_SPAN.SINGULAR.")+"years"| translate}}</option>
+                </select>
+              </div>
+            </div>
 
         <custom-field fa="calendar">
           <input class="input" type="text" :placeholder="settings.dateFormat" v-model="newRecurringOperation.date">
@@ -125,6 +150,8 @@
         </custom-field>
 
       </div>
+        </div>
+      </div>
       <div v-else>
         <p class="title">{{'MAIN_PANE.RECURRINGS.MODAL.TITLE.'+modalConfig.translate| translate}}</p>
         <form class="field has-addons">
@@ -211,9 +238,18 @@ export default {
       recurrings: [],
       modalConfig: {callback: () => {}},
       launching: false,
-      launch: {},
-      newRecurringOperation: {},
-      operationTypes: OPERATION_TYPES
+      operationTypes: OPERATION_TYPES,
+      launch: {
+        offset: this.$root.settings.defaultOffset,
+        timeSpan: this.$root.settings.defaultTimeSpan
+      },
+      newRecurringOperation: {
+        date: moment().format(this.$root.settings.dateFormat),
+        selectedAccount: this.$root.accounts[0],
+        type: 'credit-card',
+        offset: 1,
+        timespan: this.$root.settings.defaultTimeSpan
+      }
     }
   },
   computed: {
@@ -474,6 +510,7 @@ export default {
       offset: 1,
       timespan: 'days'
     }
+    console.log(this.newRecurringOperation)
   }
 }
 </script>
